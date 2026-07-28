@@ -154,3 +154,51 @@ export default function Dashboard() {
                   required
                   className="border border-line px-3 py-2"
                   value={formProduit.nom}
+                  onChange={(e) => setFormProduit({ ...formProduit, nom: e.target.value })}
+                />
+              </label>
+
+              <label className="flex flex-col gap-1 text-sm">
+                Prix (FCFA)
+                <input
+                  required
+                  type="number"
+                  className="border border-line px-3 py-2"
+                  value={formProduit.prix}
+                  onChange={(e) => setFormProduit({ ...formProduit, prix: e.target.value })}
+                />
+              </label>
+
+              <label className="flex flex-col gap-1 text-sm">
+                Stock
+                <input
+                  type="number"
+                  className="border border-line px-3 py-2"
+                  value={formProduit.stock}
+                  onChange={(e) => setFormProduit({ ...formProduit, stock: e.target.value })}
+                />
+              </label>
+
+              {erreur && <p className="text-sm">{erreur}</p>}
+
+              <button className="mt-4 border border-ink bg-ink px-4 py-3 text-paper hover:bg-paper hover:text-ink transition-colors">
+                Ajouter le produit
+              </button>
+            </form>
+          </section>
+
+          <section className="mt-10">
+            <h2 className="font-display text-xl">Vos produits ({boutique.produits.length})</h2>
+            <ul className="mt-4">
+              {boutique.produits.map((p) => (
+                <li key={p.id} className="border-b border-line py-3 text-sm">
+                  {p.nom} — {p.prix} FCFA — stock : {p.stock}
+                </li>
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+    </main>
+  );
+}
