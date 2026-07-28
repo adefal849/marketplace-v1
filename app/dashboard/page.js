@@ -14,6 +14,7 @@ export default function Dashboard() {
   const [erreur, setErreur] = useState("");
   const [formOuvert, setFormOuvert] = useState(false);
   const [lienCopie, setLienCopie] = useState(false);
+  const [commandesEnAttente, setCommandesEnAttente] = useState(0);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -22,7 +23,21 @@ export default function Dashboard() {
       return;
     }
     chargerBoutique(token);
+    chargerCommandesEnAttente(token);
   }, [router]);
+
+  async function chargerCommandesEnAttente(token) {
+    try {
+      const res = await fetch("/api/commandes", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      const enAttente = (data.commandes || []).filter((c) => c.statut === "EN_ATTENTE");
+      setCommandesEnAttente(enAttente.length);
+    } catch {
+      // silencieux : le badge reste simplement à 0
+    }
+  }
 
   async function chargerBoutique(token) {
     const res = await fetch("/api/boutiques/me", {
@@ -108,6 +123,9 @@ export default function Dashboard() {
         <nav className="flex items-center gap-5 text-sm">
           <Link href="/" className="hover:underline">Accueil</Link>
           <span className="font-medium underline">Tableau de bord</span>
+          <Link href="/dashboard/commandes" className="hover:underline">
+            Commandes{commandesEnAttente > 0 ? ` (${commandesEnAttente})` : ""}
+          </Link>
           <Link href="/dashboard/parametres" className="hover:underline">Paramètres</Link>
           <ThemeToggle />
           <button onClick={deconnexion} className="border border-current px-3 py-1 text-xs">

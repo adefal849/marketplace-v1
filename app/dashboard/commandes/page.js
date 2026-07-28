@@ -1,0 +1,137 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+
+const LABELS_STATUT = {
+  EN_ATTENTE: "En attente",
+  CONFIRMEE: "Confirmée",
+  EXPEDIEE: "Expédiée",
+  LIVREE: "Livrée",
+  ANNULEE: "Annulée",
+};
+
+export default function Commandes() {
+  const router = useRouter();
+  const [chargement, setChargement] = useState(true);
+  const [commandes, setCommandes] = useState([]);
+  const [erreur, setErreur] = useState("");
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/connexion");
+      return;
+    }
+    charger(token);
+  }, [router]);
+
+  async function charger(token) {
+    const res = await fetch("/api/commandes", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await res.json();
+    setCommandes(data.commandes || []);
+    setChargement(false);
+  }
+
+  async function changerStatut(id, statut) {
+    setErreur("");
+    const token = localStorage.getItem("token");
+    const res = await fetch(`/api/commandes/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ statut }),
+    });
+
+    if (res.ok) {
+      setCommandes((actuel) =>
+        actuel.map((c) => (c.id === id ? { ...c, statut } : c))
+      );
+    } else {
+      setErreur("Impossible de mettre à jour cette commande.");
+    }
+  }
+
+  if (chargement) {
+    return <main className="min-h-screen px-6 py-12">Chargement...</main>;
+  }
+
+  return (
+    <main className="min-h-screen">
+      <header className="flex items-center justify-between border-b border-line px-6 py-4">
+        <span className="font-display text-lg">Marketplace</span>
+        <nav className="flex items-center gap-5 text-sm">
+          <Link href="/" className="hover:underline">
+            Accueil
+          </Link>
+          <Link href="/dashboard" className="hover:underline">
+            Tableau de bord
+          </Link>
+          <span className="font-medium underline">
+            Commandes
+            {commandes.filter((c) => c.statut === "EN_ATTENTE").length > 0
+              ? ` (${commandes.filter((c) => c.statut === "EN_ATTENTE").length})`
+              : ""}
+          </span>
+          <Link href="/dashboard/parametres" className="hover:underline">
+            Paramètres
+          </Link>
+        </nav>
+      </header>
+
+      <div className="px-6 py-10 md:px-12">
+        <h1 className="font-display text-2xl">Commandes ({commandes.length})</h1>
+        {erreur && <p className="mt-2 text-sm">{erreur}</p>}
+
+        {commandes.length === 0 ? (
+          <p className="mt-4 text-muted">Aucune commande pour le moment.</p>
+        ) : (
+          <ul className="mt-6 flex flex-col gap-4">
+            {commandes.map((c) => (
+              <li key={c.id} className="border border-line p-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p className="font-display">{c.clientNom}</p>
+                    <p className="text-sm text-muted">
+                      {c.clientEmail}
+                      {c.clientTel ? ` — ${c.clientTel}` : ""}
+                    </p>
+                  </div>
+                  <select
+                    value={c.statut}
+                    onChange={(e) => changerStatut(c.id, e.target.value)}
+                    className="border border-line px-2 py-1 text-sm"
+                  >
+                    {Object.entries(LABELS_STATUT).map(([valeur, libelle]) => (
+                      <option key={valeur} value={valeur}>
+                        {libelle}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <ul className="mt-3 border-t border-line pt-3 text-sm">
+                  {c.lignes.map((l) => (
+                    <li key={l.id} className="flex justify-between">
+                      <span>
+                        {l.quantite} × {l.produit.nom}
+                      </span>
+                      <span>{l.quantite * l.prixUnitaire} FCFA</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <p className="mt-3 text-right font-display">{c.total} FCFA</p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </main>
+  );
+}

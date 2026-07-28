@@ -9,9 +9,14 @@ Thème : noir et blanc uniquement (voir `tailwind.config.js`).
 
 - Inscription / connexion vendeur (JWT + bcrypt)
 - Création de boutique (1 boutique par vendeur, slug généré automatiquement)
-- Ajout de produits (API prête, formulaire dashboard à brancher ensuite)
+- Ajout / suppression de produits depuis le dashboard vendeur
 - Page publique boutique avec liste des produits
-- Dashboard vendeur minimal
+- Panier client multi-boutiques (persisté en local, pas de compte client requis)
+- Passage de commande : un panier est réparti automatiquement en une
+  commande par boutique, avec vérification et décrément du stock
+- Liste des commandes + changement de statut (en attente → confirmée →
+  expédiée → livrée / annulée) dans le dashboard vendeur
+- Dashboard vendeur (produits, commandes, paramètres)
 
 ## Démarrage local
 
@@ -37,12 +42,7 @@ Thème : noir et blanc uniquement (voir `tailwind.config.js`).
 
 ## Prochaines étapes (dans l'ordre)
 
-1. Formulaire d'ajout de produit dans le dashboard (brancher `/api/produits`)
-2. Liste des produits + stock dans le dashboard
-3. Panier côté client (state React, pas besoin de DB)
-4. Commande simple (statut "en attente", pas encore de paiement réel)
-5. Liste des commandes dans le dashboard vendeur
-6. Espace admin (liste vendeurs, suspension via le champ `actif`)
-
-Le paiement réel (Stripe, CinetPay, Mobile Money...), les avis, coupons et
-sous-domaines viendront après cette V1 fonctionnelle.
+1. Espace admin (liste vendeurs, suspension via le champ `actif`)
+2. Paiement réel (Mobile Money, CinetPay, Stripe...) — les commandes sont
+   pour l'instant créées avec le statut "en attente" sans paiement
+3. Avis clients, coupons, sous-domaines par boutique

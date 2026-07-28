@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import CartBadge from "./CartBadge";
 export const dynamic = "force-dynamic";
 export default async function Accueil() {
   const boutiques = await prisma.boutique.findMany({
@@ -13,6 +14,7 @@ export default async function Accueil() {
       <header className="flex items-center justify-between border-b border-line px-6 py-5 md:px-12">
         <span className="font-display text-lg tracking-tight">Marketplace</span>
         <nav className="flex items-center gap-6 text-sm">
+          <CartBadge />
           <Link href="/connexion" className="hover:underline">
             Connexion vendeur
           </Link>
