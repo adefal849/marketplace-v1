@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import BackButton from "../../BackButton";
 
 export default function Inscription() {
   const router = useRouter();
@@ -35,6 +36,7 @@ export default function Inscription() {
 
   return (
     <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6">
+      <BackButton secours="/" texte="Accueil" />
       <h1 className="font-display text-3xl">Créer votre compte vendeur</h1>
       <p className="mt-2 text-sm text-muted">
         Déjà inscrit ?{" "}

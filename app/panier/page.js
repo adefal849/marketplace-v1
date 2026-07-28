@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useCart } from "../CartContext";
+import BackButton from "../BackButton";
 
 export default function Panier() {
   const { panier, retirer, changerQuantite, vider, total } = useCart();
@@ -115,6 +116,7 @@ export default function Panier() {
   if (confirmation) {
     return (
       <main className="mx-auto min-h-screen max-w-lg px-6 py-16">
+        <BackButton secours="/" texte="Accueil" />
         <h1 className="font-display text-3xl">Commande confirmée</h1>
         <p className="mt-3 text-sm text-muted">
           {confirmation.length > 1
@@ -140,9 +142,7 @@ export default function Panier() {
 
   return (
     <main className="mx-auto min-h-screen max-w-lg px-6 py-12">
-      <Link href="/" className="text-sm hover:underline">
-        ← Continuer mes achats
-      </Link>
+      <BackButton secours="/" texte="Continuer mes achats" />
       <h1 className="mt-4 font-display text-3xl">Votre panier</h1>
 
       {alerteStock && (

@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 // Bulle de chat flottante : l'acheteur pose une question sur un produit,
 // l'assistant (Groq) répond en s'appuyant sur le vrai catalogue de la
 // boutique, pour rassurer sur la qualité sans jamais inventer.
-export default function AssistantChat({ slug, boutiqueNom }) {
+export default function AssistantChat({ slug, boutiqueNom, questionExterne }) {
   const [ouvert, setOuvert] = useState(false);
   const [messages, setMessages] = useState([
     {
@@ -16,19 +16,28 @@ export default function AssistantChat({ slug, boutiqueNom }) {
   const [saisie, setSaisie] = useState("");
   const [envoi, setEnvoi] = useState(false);
   const finRef = useRef(null);
+  const derniereCleExterne = useRef(null);
 
   useEffect(() => {
     if (ouvert) finRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, ouvert]);
 
-  async function envoyer(e) {
-    e.preventDefault();
-    const texte = saisie.trim();
+  // Quand un produit envoie une question (bouton "Ce produit existe-t-il
+  // encore ?"), on ouvre le chat et on l'envoie automatiquement.
+  useEffect(() => {
+    if (!questionExterne || questionExterne.cle === derniereCleExterne.current) return;
+    derniereCleExterne.current = questionExterne.cle;
+    setOuvert(true);
+    envoyerTexte(questionExterne.texte);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [questionExterne]);
+
+  async function envoyerTexte(texte) {
+    texte = texte.trim();
     if (!texte || envoi) return;
 
     const nouveaux = [...messages, { role: "user", content: texte }];
     setMessages(nouveaux);
-    setSaisie("");
     setEnvoi(true);
 
     try {
@@ -54,6 +63,13 @@ export default function AssistantChat({ slug, boutiqueNom }) {
     } finally {
       setEnvoi(false);
     }
+  }
+
+  function envoyer(e) {
+    e.preventDefault();
+    const texte = saisie;
+    setSaisie("");
+    envoyerTexte(texte);
   }
 
   return (
