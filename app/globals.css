@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-display: "Fraunces", serif;
+  --font-body: "Inter", sans-serif;
+}
+
+body {
+  @apply bg-paper text-ink font-body antialiased;
+}
+
+/* Mode boutique sombre : activé en ajoutant la classe "dark" sur <html> */
+.dark body {
+  @apply bg-ink text-paper;
+}
+
+::selection {
+  @apply bg-ink text-paper;
+}
+.dark ::selection {
+  @apply bg-paper text-ink;
+}
+
+/* Focus clavier toujours visible, jamais supprimé */
+:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
