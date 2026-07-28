@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useCart } from "../../CartContext";
+import AssistantChat from "./AssistantChat";
 
 export default function BoutiqueClient({ boutique }) {
   const { ajouter, nombreArticles } = useCart();
@@ -68,6 +69,8 @@ export default function BoutiqueClient({ boutique }) {
           </ul>
         )}
       </section>
+
+      <AssistantChat slug={boutique.slug} boutiqueNom={boutique.nom} />
     </>
   );
 }

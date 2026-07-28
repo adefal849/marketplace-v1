@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import ThemeToggle from "../../ThemeToggle";
+import DashboardHeader from "../DashboardHeader";
 
 export default function Parametres() {
   const router = useRouter();
@@ -74,38 +73,16 @@ export default function Parametres() {
     }
   }
 
-  function deconnexion() {
-    localStorage.removeItem("token");
-    router.push("/");
-  }
-
   if (chargement) {
     return <main className="min-h-screen px-6 py-12">Chargement...</main>;
   }
 
   return (
     <main className="min-h-screen">
-      <header className="flex items-center justify-between border-b border-line px-6 py-4">
-        <span className="font-display text-lg">Marketplace</span>
-        <nav className="flex items-center gap-5 text-sm">
-          <Link href="/" className="hover:underline">Accueil</Link>
-          <Link href="/dashboard" className="hover:underline">Tableau de bord</Link>
-          <Link href="/dashboard/commandes" className="hover:underline">Commandes</Link>
-          <span className="font-medium underline">Paramètres</span>
-        </nav>
-      </header>
+      <DashboardHeader actif="parametres" boutiqueSlug={boutique?.slug} />
 
       <div className="mx-auto max-w-md px-6 py-10">
         <h1 className="font-display text-2xl">Paramètres</h1>
-
-        {/* Apparence */}
-        <section className="mt-8 border border-line p-4">
-          <h2 className="font-display text-lg">Apparence</h2>
-          <p className="mt-1 text-sm text-muted">Thème blanc ou noir.</p>
-          <div className="mt-3">
-            <ThemeToggle />
-          </div>
-        </section>
 
         {/* Profil */}
         <section className="mt-6 border border-line p-4">
@@ -154,17 +131,6 @@ export default function Parametres() {
             )}
           </section>
         )}
-
-        {/* Compte */}
-        <section className="mt-6 border border-line p-4">
-          <h2 className="font-display text-lg">Compte</h2>
-          <button
-            onClick={deconnexion}
-            className="mt-3 border border-current px-4 py-2 text-sm"
-          >
-            Déconnexion
-          </button>
-        </section>
       </div>
     </main>
   );

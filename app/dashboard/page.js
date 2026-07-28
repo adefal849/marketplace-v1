@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import ThemeToggle from "../ThemeToggle";
+import DashboardHeader from "./DashboardHeader";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -15,6 +14,7 @@ export default function Dashboard() {
   const [formOuvert, setFormOuvert] = useState(false);
   const [lienCopie, setLienCopie] = useState(false);
   const [commandesEnAttente, setCommandesEnAttente] = useState(0);
+  const [tendances, setTendances] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -23,19 +23,35 @@ export default function Dashboard() {
       return;
     }
     chargerBoutique(token);
-    chargerCommandesEnAttente(token);
+    chargerCommandes(token);
   }, [router]);
 
-  async function chargerCommandesEnAttente(token) {
+  // Une seule requête sert à la fois le badge "en attente" et le
+  // classement des produits qui se vendent le mieux (tendances).
+  async function chargerCommandes(token) {
     try {
       const res = await fetch("/api/commandes", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
-      const enAttente = (data.commandes || []).filter((c) => c.statut === "EN_ATTENTE");
-      setCommandesEnAttente(enAttente.length);
+      const commandes = data.commandes || [];
+
+      setCommandesEnAttente(commandes.filter((c) => c.statut === "EN_ATTENTE").length);
+
+      const ventesParProduit = new Map();
+      for (const commande of commandes) {
+        for (const ligne of commande.lignes || []) {
+          const nom = ligne.produit?.nom || "Produit supprimé";
+          ventesParProduit.set(nom, (ventesParProduit.get(nom) || 0) + ligne.quantite);
+        }
+      }
+      const classement = [...ventesParProduit.entries()]
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3)
+        .map(([nom, quantite]) => ({ nom, quantite }));
+      setTendances(classement);
     } catch {
-      // silencieux : le badge reste simplement à 0
+      // silencieux : badge et tendances restent vides
     }
   }
 
@@ -106,35 +122,19 @@ export default function Dashboard() {
     setTimeout(() => setLienCopie(false), 2000);
   }
 
-  function deconnexion() {
-    localStorage.removeItem("token");
-    router.push("/");
-  }
-
   if (chargementInitial) {
     return <main className="min-h-screen px-6 py-12">Chargement...</main>;
   }
 
   return (
     <main className="min-h-screen">
-      {/* Barre de navigation du vendeur */}
-      <header className="flex items-center justify-between border-b border-line px-6 py-4">
-        <span className="font-display text-lg">Marketplace</span>
-        <nav className="flex items-center gap-5 text-sm">
-          <Link href="/" className="hover:underline">Accueil</Link>
-          <span className="font-medium underline">Tableau de bord</span>
-          <Link href="/dashboard/commandes" className="hover:underline">
-            Commandes{commandesEnAttente > 0 ? ` (${commandesEnAttente})` : ""}
-          </Link>
-          <Link href="/dashboard/parametres" className="hover:underline">Paramètres</Link>
-          <ThemeToggle />
-          <button onClick={deconnexion} className="border border-current px-3 py-1 text-xs">
-            Déconnexion
-          </button>
-        </nav>
-      </header>
+      <DashboardHeader
+        actif="dashboard"
+        commandesEnAttente={commandesEnAttente}
+        boutiqueSlug={boutique?.slug}
+      />
 
-      <div className="px-6 py-10 md:px-12">
+      <div className="px-6 py-8 md:px-12">
         {!boutique ? (
           <section className="max-w-md">
             <h2 className="font-display text-xl">Créez votre boutique</h2>
@@ -171,24 +171,40 @@ export default function Dashboard() {
           </section>
         ) : (
           <>
-            {/* Boutique + lien à copier */}
-            <section className="flex flex-wrap items-center gap-3 border border-line p-4">
-              <div>
-                <p className="text-sm text-muted">Votre boutique</p>
-                <p className="font-display text-lg">{boutique.nom}</p>
-              </div>
-              <div className="ml-auto flex items-center gap-2">
-                <a href={`/boutique/${boutique.slug}`} target="_blank" className="text-sm underline">
-                  /boutique/{boutique.slug}
-                </a>
-                <button onClick={copierLien} className="border border-current px-3 py-1 text-xs">
-                  {lienCopie ? "Copié !" : "Copier le lien"}
-                </button>
-              </div>
-            </section>
+            {/* Boutique + lien à copier + tendances, sur une même ligne compacte */}
+            <div className="flex flex-col gap-4 md:flex-row">
+              <section className="flex flex-wrap items-center gap-3 border border-line p-4 md:flex-1">
+                <div>
+                  <p className="text-sm text-muted">Votre boutique</p>
+                  <p className="font-display text-lg">{boutique.nom}</p>
+                </div>
+                <div className="ml-auto flex items-center gap-2">
+                  <a href={`/boutique/${boutique.slug}`} target="_blank" className="text-sm underline">
+                    /boutique/{boutique.slug}
+                  </a>
+                  <button onClick={copierLien} className="border border-current px-3 py-1 text-xs">
+                    {lienCopie ? "Copié !" : "Copier le lien"}
+                  </button>
+                </div>
+              </section>
+
+              {tendances.length > 0 && (
+                <section className="border border-line p-4 md:w-64">
+                  <p className="text-sm text-muted">📈 Tendances</p>
+                  <ul className="mt-2 flex flex-col gap-1 text-sm">
+                    {tendances.map((t, i) => (
+                      <li key={t.nom} className="flex justify-between gap-2">
+                        <span className="truncate">{i + 1}. {t.nom}</span>
+                        <span className="text-muted">{t.quantite} vendus</span>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
+            </div>
 
             {/* Bouton pour déplier le formulaire d'ajout de produit */}
-            <section className="mt-8 max-w-md">
+            <section className="mt-6 max-w-md">
               <button
                 onClick={() => setFormOuvert(!formOuvert)}
                 className="w-full border border-ink px-4 py-3 text-left font-display text-lg"
@@ -239,7 +255,7 @@ export default function Dashboard() {
             </section>
 
             {/* Liste des produits */}
-            <section className="mt-10">
+            <section className="mt-8">
               <h2 className="font-display text-xl">Vos produits ({boutique.produits.length})</h2>
               <ul className="mt-4">
                 {boutique.produits.map((p) => (

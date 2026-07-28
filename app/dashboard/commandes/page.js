@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import DashboardHeader from "../DashboardHeader";
 
 const LABELS_STATUT = {
   EN_ATTENTE: "En attente",
@@ -63,26 +63,10 @@ export default function Commandes() {
 
   return (
     <main className="min-h-screen">
-      <header className="flex items-center justify-between border-b border-line px-6 py-4">
-        <span className="font-display text-lg">Marketplace</span>
-        <nav className="flex items-center gap-5 text-sm">
-          <Link href="/" className="hover:underline">
-            Accueil
-          </Link>
-          <Link href="/dashboard" className="hover:underline">
-            Tableau de bord
-          </Link>
-          <span className="font-medium underline">
-            Commandes
-            {commandes.filter((c) => c.statut === "EN_ATTENTE").length > 0
-              ? ` (${commandes.filter((c) => c.statut === "EN_ATTENTE").length})`
-              : ""}
-          </span>
-          <Link href="/dashboard/parametres" className="hover:underline">
-            Paramètres
-          </Link>
-        </nav>
-      </header>
+      <DashboardHeader
+        actif="commandes"
+        commandesEnAttente={commandes.filter((c) => c.statut === "EN_ATTENTE").length}
+      />
 
       <div className="px-6 py-10 md:px-12">
         <h1 className="font-display text-2xl">Commandes ({commandes.length})</h1>
