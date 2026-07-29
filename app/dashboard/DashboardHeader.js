@@ -10,7 +10,7 @@ import ThemeToggle from "../ThemeToggle";
 // visibles directement ; le reste (paramètres, thème, lien boutique
 // publique, déconnexion) est regroupé dans un menu déroulant pour ne pas
 // surcharger la barre du haut.
-export default function DashboardHeader({ actif, commandesEnAttente = 0, boutiqueSlug }) {
+export default function DashboardHeader({ actif, commandesEnAttente = 0, messagesNonLus = 0, boutiqueSlug }) {
   const router = useRouter();
   const [menuOuvert, setMenuOuvert] = useState(false);
   const menuRef = useRef(null);
@@ -39,6 +39,9 @@ export default function DashboardHeader({ actif, commandesEnAttente = 0, boutiqu
       </Link>
 
       <nav className="flex items-center gap-5 text-sm">
+        <Link href="/" className="hover:underline">
+          Accueil
+        </Link>
         <Link
           href="/dashboard"
           className={actif === "dashboard" ? "font-medium underline" : "hover:underline"}
@@ -50,6 +53,12 @@ export default function DashboardHeader({ actif, commandesEnAttente = 0, boutiqu
           className={actif === "commandes" ? "font-medium underline" : "hover:underline"}
         >
           Commandes{commandesEnAttente > 0 ? ` (${commandesEnAttente})` : ""}
+        </Link>
+        <Link
+          href="/dashboard/messages"
+          className={actif === "messages" ? "font-medium underline" : "hover:underline"}
+        >
+          Messages{messagesNonLus > 0 ? ` (${messagesNonLus})` : ""}
         </Link>
 
         <div ref={menuRef} className="relative">

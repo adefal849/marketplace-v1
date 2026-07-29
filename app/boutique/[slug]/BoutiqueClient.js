@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useCart } from "../../CartContext";
 import AssistantChat from "./AssistantChat";
+import ContactVendeurChat from "./ContactVendeurChat";
 import BackButton from "../../BackButton";
 
 const SEPT_JOURS_MS = 7 * 24 * 60 * 60 * 1000;
@@ -115,6 +116,7 @@ export default function BoutiqueClient({ boutique }) {
         boutiqueNom={boutique.nom}
         questionExterne={questionProduit}
       />
+      <ContactVendeurChat slug={boutique.slug} boutiqueNom={boutique.nom} />
     </>
   );
 }

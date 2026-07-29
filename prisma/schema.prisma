@@ -28,23 +28,25 @@ model User {
   email       String    @unique
   motDePasse  String
   nom         String
+  pays        String?   // code ISO2 (ex: "BJ", "CI", "FR"), sert à personnaliser l'offre
   role        Role      @default(VENDEUR)
   boutique    Boutique?
   createdAt   DateTime  @default(now())
 }
 
 model Boutique {
-  id          String     @id @default(cuid())
-  nom         String
-  slug        String     @unique // utilisé dans /boutique/[slug]
-  description String?
-  logoUrl     String?
-  actif       Boolean    @default(true) // permet à l'admin de suspendre
-  vendeur     User       @relation(fields: [vendeurId], references: [id])
-  vendeurId   String     @unique
-  produits    Produit[]
-  commandes   Commande[]
-  createdAt   DateTime   @default(now())
+  id            String         @id @default(cuid())
+  nom           String
+  slug          String         @unique // utilisé dans /boutique/[slug]
+  description   String?
+  logoUrl       String?
+  actif         Boolean        @default(true) // permet à l'admin de suspendre
+  vendeur       User           @relation(fields: [vendeurId], references: [id])
+  vendeurId     String         @unique
+  produits      Produit[]
+  commandes     Commande[]
+  conversations Conversation[]
+  createdAt     DateTime       @default(now())
 }
 
 model Produit {
@@ -87,4 +89,32 @@ model LigneCommande {
   produitId   String
   commande    Commande @relation(fields: [commandeId], references: [id])
   commandeId  String
+}
+
+// Discussion acheteur ↔ vendeur (par actualisation automatique côté
+// client, pas de websocket : suffisant pour le volume actuel et sans
+// dépendance à un service externe).
+model Conversation {
+  id          String    @id @default(cuid())
+  boutique    Boutique  @relation(fields: [boutiqueId], references: [id])
+  boutiqueId  String
+  clientNom   String
+  clientEmail String
+  messages    Message[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([boutiqueId])
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  conversationId String
+  auteur         String       // "CLIENT" | "VENDEUR"
+  contenu        String
+  lu             Boolean      @default(false) // vu par le vendeur
+  createdAt      DateTime     @default(now())
+
+  @@index([conversationId])
 }

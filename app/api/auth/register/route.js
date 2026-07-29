@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { hashMotDePasse, creerToken } from "@/lib/auth";
 
 export async function POST(request) {
-  const { email, motDePasse, nom } = await request.json();
+  const { email, motDePasse, nom, pays } = await request.json();
 
   if (!email || !motDePasse || !nom) {
     return NextResponse.json(
@@ -23,7 +23,7 @@ export async function POST(request) {
   const motDePasseHash = await hashMotDePasse(motDePasse);
 
   const user = await prisma.user.create({
-    data: { email, nom, motDePasse: motDePasseHash },
+    data: { email, nom, motDePasse: motDePasseHash, pays: pays || null },
   });
 
   const token = creerToken({ id: user.id, role: user.role });

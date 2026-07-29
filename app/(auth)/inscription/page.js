@@ -4,10 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import BackButton from "../../BackButton";
+import { PAYS, drapeau } from "../../pays";
 
 export default function Inscription() {
   const router = useRouter();
-  const [form, setForm] = useState({ nom: "", email: "", motDePasse: "" });
+  const [form, setForm] = useState({ nom: "", email: "", motDePasse: "", pays: "" });
   const [erreur, setErreur] = useState("");
   const [chargement, setChargement] = useState(false);
 
@@ -77,6 +78,23 @@ export default function Inscription() {
             value={form.motDePasse}
             onChange={(e) => setForm({ ...form, motDePasse: e.target.value })}
           />
+        </label>
+
+        <label className="flex flex-col gap-1 text-sm">
+          Pays
+          <select
+            required
+            className="border border-line px-3 py-2"
+            value={form.pays}
+            onChange={(e) => setForm({ ...form, pays: e.target.value })}
+          >
+            <option value="">Sélectionnez votre pays</option>
+            {PAYS.map((p) => (
+              <option key={p.iso} value={p.iso}>
+                {drapeau(p.iso)} {p.nom} ({p.indicatif})
+              </option>
+            ))}
+          </select>
         </label>
 
         {erreur && <p className="text-sm">{erreur}</p>}

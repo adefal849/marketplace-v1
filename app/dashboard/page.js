@@ -15,6 +15,7 @@ export default function Dashboard() {
   const [formOuvert, setFormOuvert] = useState(false);
   const [lienCopie, setLienCopie] = useState(false);
   const [commandesEnAttente, setCommandesEnAttente] = useState(0);
+  const [messagesNonLus, setMessagesNonLus] = useState(0);
   const [tendances, setTendances] = useState([]);
 
   useEffect(() => {
@@ -25,7 +26,21 @@ export default function Dashboard() {
     }
     chargerBoutique(token);
     chargerCommandes(token);
+    chargerMessages(token);
   }, [router]);
+
+  async function chargerMessages(token) {
+    try {
+      const res = await fetch("/api/conversations", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      const total = (data.conversations || []).reduce((s, c) => s + c.nonLus, 0);
+      setMessagesNonLus(total);
+    } catch {
+      // silencieux
+    }
+  }
 
   // Une seule requête sert à la fois le badge "en attente" et le
   // classement des produits qui se vendent le mieux (tendances).
@@ -133,6 +148,7 @@ export default function Dashboard() {
       <DashboardHeader
         actif="dashboard"
         commandesEnAttente={commandesEnAttente}
+        messagesNonLus={messagesNonLus}
         boutiqueSlug={boutique?.slug}
       />
 
