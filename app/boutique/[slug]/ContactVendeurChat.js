@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { X, User } from "lucide-react";
 
 // Bulle "Discuter avec le vendeur" (humain, distincte de l'assistant IA).
 // Nom/email demandés une seule fois, gardés en localStorage pour retrouver
@@ -100,8 +101,8 @@ export default function ContactVendeurChat({ slug, boutiqueNom }) {
         <div className="mb-3 flex h-96 w-72 flex-col border border-line bg-paper shadow-lg sm:w-80">
           <div className="flex items-center justify-between border-b border-line px-4 py-3">
             <p className="text-sm font-medium">Discuter avec {boutiqueNom}</p>
-            <button onClick={() => setOuvert(false)} aria-label="Fermer" className="text-sm">
-              ✕
+            <button onClick={() => setOuvert(false)} aria-label="Fermer">
+              <X size={16} />
             </button>
           </div>
 
@@ -161,9 +162,10 @@ export default function ContactVendeurChat({ slug, boutiqueNom }) {
 
       <button
         onClick={() => setOuvert(!ouvert)}
-        className="border border-current px-4 py-3 text-sm shadow-lg transition-colors hover:bg-ink hover:text-paper"
+        className="flex items-center gap-2 border border-current px-4 py-3 text-sm shadow-lg transition-colors hover:bg-ink hover:text-paper"
       >
-        {ouvert ? "Fermer" : "👤 Discuter avec le vendeur"}
+        {ouvert ? <X size={16} /> : <User size={16} />}
+        {ouvert ? "Fermer" : "Discuter avec le vendeur"}
       </button>
     </div>
   );

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import DashboardHeader from "./DashboardHeader";
 import { CATEGORIES } from "../categories";
+import { TrendingUp } from "lucide-react";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -208,7 +209,9 @@ export default function Dashboard() {
 
               {tendances.length > 0 && (
                 <section className="border border-line p-4 md:w-64">
-                  <p className="text-sm text-muted">📈 Tendances</p>
+                  <p className="flex items-center gap-1.5 text-sm text-muted">
+                    <TrendingUp size={14} /> Tendances
+                  </p>
                   <ul className="mt-2 flex flex-col gap-1 text-sm">
                     {tendances.map((t, i) => (
                       <li key={t.nom} className="flex justify-between gap-2">
@@ -263,7 +266,7 @@ export default function Dashboard() {
                       <option value="">Sans catégorie</option>
                       {CATEGORIES.map((c) => (
                         <option key={c.valeur} value={c.valeur}>
-                          {c.emoji} {c.label}
+                          {c.label}
                         </option>
                       ))}
                     </select>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ShoppingBag, Store } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import TopNav from "./TopNav";
 import Decouverte from "./Decouverte";
@@ -17,25 +18,17 @@ export default async function Accueil() {
     <main className="min-h-screen">
       <TopNav />
 
-      {/* Hero : fond décoratif léger (motif de pictos achat/sac/produit en
-          filigrane) + message publicitaire + choix acheter/vendre */}
-      <section className="relative overflow-hidden border-b border-line px-6 py-20 md:px-12 md:py-28">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 select-none text-6xl leading-none opacity-[0.04]"
-        >
-          <p className="whitespace-nowrap">
-            🛍️ 👜 👗 📱 👠 🛒 💄 🎧 👟 🧴 🛍️ 👜 👗 📱 👠 🛒 💄 🎧 👟 🧴
-          </p>
-          <p className="mt-8 whitespace-nowrap">
-            👜 📱 👠 🛒 💄 🎧 👟 🧴 🛍️ 👜 👗 📱 👠 🛒 💄 🎧 👟 🧴 🛍️ 👜
-          </p>
-          <p className="mt-8 whitespace-nowrap">
-            📱 👠 🛒 💄 🎧 👟 🧴 🛍️ 👜 👗 📱 👠 🛒 💄 🎧 👟 🧴 🛍️ 👜 👗
-          </p>
-        </div>
-
-        <div className="relative">
+      {/* Hero : fond en grille de points discrète + message publicitaire
+          + choix acheter/vendre */}
+      <section
+        className="relative border-b border-line px-6 py-20 text-line md:px-12 md:py-28"
+        style={{
+          backgroundImage: "radial-gradient(currentColor 1px, transparent 1px)",
+          backgroundSize: "24px 24px",
+          backgroundPosition: "-12px -12px",
+        }}
+      >
+        <div className="relative text-ink">
           <h1 className="max-w-2xl font-display text-4xl leading-tight md:text-6xl">
             Chaque boutique a une adresse. Chaque vente vous appartient.
           </h1>
@@ -47,15 +40,15 @@ export default async function Accueil() {
           <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:max-w-md">
             <a
               href="#decouverte"
-              className="flex-1 border border-ink bg-ink px-5 py-4 text-center text-sm text-paper transition-colors hover:bg-paper hover:text-ink"
+              className="flex flex-1 items-center justify-center gap-2 border border-ink bg-ink px-5 py-4 text-sm text-paper transition-colors hover:bg-paper hover:text-ink"
             >
-              🛍️ Je veux acheter
+              <ShoppingBag size={16} /> Je veux acheter
             </a>
             <Link
               href="/inscription"
-              className="flex-1 border border-ink px-5 py-4 text-center text-sm transition-colors hover:bg-ink hover:text-paper"
+              className="flex flex-1 items-center justify-center gap-2 border border-ink px-5 py-4 text-sm transition-colors hover:bg-ink hover:text-paper"
             >
-              🏪 Je veux vendre
+              <Store size={16} /> Je veux vendre
             </Link>
           </div>
         </div>

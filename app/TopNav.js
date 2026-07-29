@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Search, X } from "lucide-react";
 import CartBadge from "./CartBadge";
 
 const LIENS = [
@@ -30,9 +31,8 @@ export default function TopNav() {
           <button
             onClick={() => setOuvert(!ouvert)}
             aria-label={ouvert ? "Fermer le menu" : "Ouvrir le menu"}
-            className="text-lg leading-none"
           >
-            {ouvert ? "✕" : "🔍"}
+            {ouvert ? <X size={20} /> : <Search size={20} />}
           </button>
         </div>
       </div>

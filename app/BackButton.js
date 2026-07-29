@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 
 // Bouton retour large et facile à toucher au pouce, utilisé en haut des
 // pages "profondes" (panier, connexion, boutique...) pour naviguer sans
@@ -23,7 +24,7 @@ export default function BackButton({ secours = "/", texte = "Retour" }) {
       onClick={revenir}
       className="mb-4 flex items-center gap-2 border border-line px-3 py-2 text-sm active:bg-line/20"
     >
-      ← {texte}
+      <ArrowLeft size={16} /> {texte}
     </button>
   );
 }

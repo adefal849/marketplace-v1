@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Check } from "lucide-react";
 import { useCart } from "../../CartContext";
 import AssistantChat from "./AssistantChat";
 import ContactVendeurChat from "./ContactVendeurChat";
@@ -90,13 +91,17 @@ export default function BoutiqueClient({ boutique }) {
                   <button
                     onClick={() => handleAjouter(p)}
                     disabled={p.stock <= 0}
-                    className="mt-3 border border-ink px-3 py-2 text-xs transition-colors hover:bg-ink hover:text-paper disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-ink"
+                    className="mt-3 flex items-center justify-center gap-1.5 border border-ink px-3 py-2 text-xs transition-colors hover:bg-ink hover:text-paper disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-ink"
                   >
-                    {p.stock <= 0
-                      ? "Rupture de stock"
-                      : ajoutes[p.id]
-                      ? "Ajouté ✓"
-                      : "Ajouter au panier"}
+                    {p.stock <= 0 ? (
+                      "Rupture de stock"
+                    ) : ajoutes[p.id] ? (
+                      <>
+                        <Check size={14} /> Ajouté
+                      </>
+                    ) : (
+                      "Ajouter au panier"
+                    )}
                   </button>
                   <button
                     onClick={() => demanderDisponibilite(p)}

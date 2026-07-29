@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { CATEGORIES } from "./categories";
+import CategoryIcon from "./CategoryIcon";
 
 // Barre de recherche + catégories, avec résultats affichés en direct.
 // Reste discret quand rien n'est cherché : l'accueil garde la liste des
@@ -57,11 +58,11 @@ export default function Decouverte() {
           <button
             key={c.valeur}
             onClick={() => setCategorie(categorie === c.valeur ? null : c.valeur)}
-            className={`shrink-0 border px-3 py-1.5 text-xs ${
+            className={`flex shrink-0 items-center gap-1.5 border px-3 py-1.5 text-xs ${
               categorie === c.valeur ? "border-ink bg-ink text-paper" : "border-line"
             }`}
           >
-            {c.emoji} {c.label}
+            <CategoryIcon nom={c.icone} size={14} /> {c.label}
           </button>
         ))}
       </div>

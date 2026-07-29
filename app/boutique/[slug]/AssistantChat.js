@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Bot, X } from "lucide-react";
 
 // Bulle de chat flottante : l'acheteur pose une question sur un produit,
 // l'assistant (Groq) répond en s'appuyant sur le vrai catalogue de la
@@ -10,7 +11,7 @@ export default function AssistantChat({ slug, boutiqueNom, questionExterne }) {
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      content: `Bonjour 👋 Une question sur un produit de "${boutiqueNom}" ? Je suis là pour vous aider.`,
+      content: `Bonjour, une question sur un produit de "${boutiqueNom}" ? Je suis là pour vous aider.`,
     },
   ]);
   const [saisie, setSaisie] = useState("");
@@ -78,8 +79,8 @@ export default function AssistantChat({ slug, boutiqueNom, questionExterne }) {
         <div className="mb-3 flex h-96 w-72 flex-col border border-line bg-paper shadow-lg sm:w-80">
           <div className="flex items-center justify-between border-b border-line px-4 py-3">
             <p className="text-sm font-medium">Assistant boutique</p>
-            <button onClick={() => setOuvert(false)} aria-label="Fermer" className="text-sm">
-              ✕
+            <button onClick={() => setOuvert(false)} aria-label="Fermer">
+              <X size={16} />
             </button>
           </div>
 
@@ -120,9 +121,10 @@ export default function AssistantChat({ slug, boutiqueNom, questionExterne }) {
 
       <button
         onClick={() => setOuvert(!ouvert)}
-        className="border border-ink bg-ink px-4 py-3 text-sm text-paper shadow-lg transition-colors hover:bg-paper hover:text-ink"
+        className="flex items-center gap-2 border border-ink bg-ink px-4 py-3 text-sm text-paper shadow-lg transition-colors hover:bg-paper hover:text-ink"
       >
-        {ouvert ? "Fermer" : "💬 Une question ?"}
+        {ouvert ? <X size={16} /> : <Bot size={16} />}
+        {ouvert ? "Fermer" : "Une question ?"}
       </button>
     </div>
   );
