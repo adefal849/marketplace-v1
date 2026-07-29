@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import TopNav from "./TopNav";
 import Decouverte from "./Decouverte";
+import Vitrine from "./Vitrine";
 
 export const dynamic = "force-dynamic";
 
@@ -59,6 +60,8 @@ export default async function Accueil() {
           </div>
         </div>
       </section>
+
+      <Vitrine />
 
       {/* Recherche + catégories + résultats */}
       <section id="decouverte" className="border-b border-line px-6 py-12 md:px-12">

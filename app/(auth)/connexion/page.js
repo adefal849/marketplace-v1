@@ -35,9 +35,9 @@ export default function Connexion() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6">
+    <main className="mx-auto flex min-h-screen max-w-md flex-col px-6 py-16">
       <BackButton secours="/" texte="Accueil" />
-      <h1 className="font-display text-3xl">Connexion</h1>
+      <h1 className="mt-4 font-display text-3xl">Connexion</h1>
       <p className="mt-2 text-sm text-muted">
         Pas encore de compte ?{" "}
         <Link href="/inscription" className="underline">

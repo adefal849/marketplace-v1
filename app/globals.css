@@ -28,3 +28,17 @@ body {
   outline: 2px solid currentColor;
   outline-offset: 2px;
 }
+
+/* Défilement continu façon "reel" pour la vitrine de l'accueil : simule
+   une vidéo de présentation sans avoir besoin d'héberger un vrai fichier
+   vidéo. Se met en pause au survol/tap pour la lisibilité. */
+@keyframes defilement {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.vitrine-defilement {
+  animation: defilement 28s linear infinite;
+}
+.vitrine-defilement:hover {
+  animation-play-state: paused;
+}

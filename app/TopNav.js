@@ -1,38 +1,56 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import CartBadge from "./CartBadge";
 
-// Petite barre de navigation qu'on fait défiler au doigt (overflow-x-auto)
-// plutôt qu'un menu qui prend toute la largeur — pensée pour mobile.
+const LIENS = [
+  { href: "/", label: "Accueil" },
+  { href: "/#boutiques", label: "Acheter" },
+  { href: "/inscription", label: "Vendre" },
+  { href: "/#categories", label: "Catégories" },
+  { href: "/contact", label: "Contact" },
+  { href: "/connexion", label: "Connexion vendeur" },
+];
+
+// En-tête minimale : logo + panier toujours visibles, le reste de la
+// navigation est replié derrière l'icône 🔍 pour ne jamais déborder,
+// même sur petit écran.
 export default function TopNav() {
-  const liens = [
-    { href: "/", label: "Accueil" },
-    { href: "/#boutiques", label: "Acheter" },
-    { href: "/inscription", label: "Vendre" },
-    { href: "/#categories", label: "Catégories" },
-    { href: "/contact", label: "Contact" },
-    { href: "/connexion", label: "Connexion vendeur" },
-  ];
+  const [ouvert, setOuvert] = useState(false);
 
   return (
-    <div className="flex items-center gap-4 border-b border-line px-6 py-3 md:px-12">
-      <Link href="/" className="shrink-0 font-display text-lg">
-        Marketplace
-      </Link>
-
-      <nav className="flex flex-1 gap-2 overflow-x-auto whitespace-nowrap [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {liens.map((l) => (
-          <Link
-            key={l.label}
-            href={l.href}
-            className="shrink-0 border border-line px-3 py-1.5 text-xs hover:border-ink"
+    <div className="border-b border-line">
+      <div className="flex items-center justify-between gap-4 px-6 py-4 md:px-12">
+        <Link href="/" className="font-display text-lg">
+          Marketplace
+        </Link>
+        <div className="flex items-center gap-4">
+          <CartBadge />
+          <button
+            onClick={() => setOuvert(!ouvert)}
+            aria-label={ouvert ? "Fermer le menu" : "Ouvrir le menu"}
+            className="text-lg leading-none"
           >
-            {l.label}
-          </Link>
-        ))}
-      </nav>
-      <CartBadge />
+            {ouvert ? "✕" : "🔍"}
+          </button>
+        </div>
+      </div>
+
+      {ouvert && (
+        <nav className="flex flex-col border-t border-line px-6 md:px-12">
+          {LIENS.map((l) => (
+            <Link
+              key={l.label}
+              href={l.href}
+              onClick={() => setOuvert(false)}
+              className="border-b border-line py-3 text-sm last:border-b-0"
+            >
+              {l.label}
+            </Link>
+          ))}
+        </nav>
+      )}
     </div>
   );
 }
