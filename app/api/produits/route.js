@@ -19,7 +19,7 @@ export async function POST(request) {
     );
   }
 
-  const { nom, description, prix, stock, imageUrl } = await request.json();
+  const { nom, description, prix, stock, imageUrl, categorie } = await request.json();
   if (!nom || prix == null) {
     return NextResponse.json(
       { erreur: "Le nom et le prix sont requis." },
@@ -34,6 +34,7 @@ export async function POST(request) {
       prix,
       stock: stock ?? 0,
       imageUrl,
+      categorie: categorie || null,
       boutiqueId: boutique.id,
     },
   });

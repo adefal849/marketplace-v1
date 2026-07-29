@@ -3,13 +3,14 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import DashboardHeader from "./DashboardHeader";
+import { CATEGORIES } from "../categories";
 
 export default function Dashboard() {
   const router = useRouter();
   const [chargementInitial, setChargementInitial] = useState(true);
   const [boutique, setBoutique] = useState(null);
   const [formBoutique, setFormBoutique] = useState({ nom: "", description: "" });
-  const [formProduit, setFormProduit] = useState({ nom: "", prix: "", stock: "" });
+  const [formProduit, setFormProduit] = useState({ nom: "", prix: "", stock: "", categorie: "" });
   const [erreur, setErreur] = useState("");
   const [formOuvert, setFormOuvert] = useState(false);
   const [lienCopie, setLienCopie] = useState(false);
@@ -101,6 +102,7 @@ export default function Dashboard() {
         nom: formProduit.nom,
         prix: Number(formProduit.prix),
         stock: Number(formProduit.stock) || 0,
+        categorie: formProduit.categorie || null,
       }),
     });
     const data = await res.json();
@@ -111,7 +113,7 @@ export default function Dashboard() {
     }
 
     setBoutique({ ...boutique, produits: [...boutique.produits, data.produit] });
-    setFormProduit({ nom: "", prix: "", stock: "" });
+    setFormProduit({ nom: "", prix: "", stock: "", categorie: "" });
     setFormOuvert(false);
   }
 
@@ -233,6 +235,22 @@ export default function Dashboard() {
                       value={formProduit.prix}
                       onChange={(e) => setFormProduit({ ...formProduit, prix: e.target.value })}
                     />
+                  </label>
+
+                  <label className="flex flex-col gap-1 text-sm">
+                    Catégorie
+                    <select
+                      className="border border-line px-3 py-2"
+                      value={formProduit.categorie}
+                      onChange={(e) => setFormProduit({ ...formProduit, categorie: e.target.value })}
+                    >
+                      <option value="">Sans catégorie</option>
+                      {CATEGORIES.map((c) => (
+                        <option key={c.valeur} value={c.valeur}>
+                          {c.emoji} {c.label}
+                        </option>
+                      ))}
+                    </select>
                   </label>
 
                   <label className="flex flex-col gap-1 text-sm">

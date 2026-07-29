@@ -51,6 +51,7 @@ model Produit {
   id          String        @id @default(cuid())
   nom         String
   description String?
+  categorie   String?
   prix        Int           // en plus petite unité monétaire (ex: centimes / FCFA entier)
   stock       Int           @default(0)
   imageUrl    String?
