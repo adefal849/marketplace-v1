@@ -76,6 +76,10 @@ export default function Connexion() {
         >
           {chargement ? "Connexion..." : "Se connecter"}
         </button>
+
+        <Link href="/mot-de-passe-oublie" className="text-center text-sm underline">
+          Mot de passe oublié ?
+        </Link>
       </form>
     </main>
   );

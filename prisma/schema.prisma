@@ -32,6 +32,8 @@ model User {
   role        Role      @default(VENDEUR)
   boutique    Boutique?
   createdAt   DateTime  @default(now())
+  resetToken       String?   @unique
+  resetTokenExpiry DateTime?
 }
 
 model Boutique {
