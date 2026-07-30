@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CATEGORIES } from "./categories";
 import CategoryIcon from "./CategoryIcon";
@@ -9,7 +10,8 @@ import CategoryIcon from "./CategoryIcon";
 // Reste discret quand rien n'est cherché : l'accueil garde la liste des
 // boutiques en dessous comme avant.
 export default function Decouverte() {
-  const [q, setQ] = useState("");
+  const searchParams = useSearchParams();
+  const [q, setQ] = useState(searchParams.get("q") || "");
   const [categorie, setCategorie] = useState(null);
   const [resultats, setResultats] = useState(null);
   const [recherche, setRecherche] = useState(false);

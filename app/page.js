@@ -1,10 +1,13 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { ShoppingBag, Store } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import TopNav from "./TopNav";
 import Decouverte from "./Decouverte";
 import Vitrine from "./Vitrine";
 import Footer from "./Footer";
+import HeroFiligrane from "./HeroFiligrane";
+import AccueilConnecte from "./AccueilConnecte";
 
 export const dynamic = "force-dynamic";
 
@@ -18,18 +21,18 @@ export default async function Accueil() {
   return (
     <main className="min-h-screen">
       <TopNav />
+      <AccueilConnecte />
 
-      {/* Hero : fond en grille de points discrète + message publicitaire
-          + choix acheter/vendre */}
+      {/* Hero : filigrane en arrière-plan + message publicitaire + choix
+          acheter/vendre. Masqué automatiquement pour les vendeurs déjà
+          connectés (voir AccueilConnecte) qui vont direct aux boutiques. */}
       <section
-        className="relative border-b border-line px-6 py-20 text-line md:px-12 md:py-28"
-        style={{
-          backgroundImage: "radial-gradient(currentColor 1px, transparent 1px)",
-          backgroundSize: "24px 24px",
-          backgroundPosition: "-12px -12px",
-        }}
+        id="hero"
+        className="relative overflow-hidden border-b border-line px-6 py-20 md:px-12 md:py-28"
       >
-        <div className="relative text-ink">
+        <HeroFiligrane />
+
+        <div className="relative">
           <h1 className="max-w-2xl font-display text-4xl leading-tight md:text-6xl">
             Chaque boutique a une adresse. Chaque vente vous appartient.
           </h1>
@@ -59,7 +62,9 @@ export default async function Accueil() {
 
       {/* Recherche + catégories + résultats */}
       <section id="decouverte" className="border-b border-line px-6 py-12 md:px-12">
-        <Decouverte />
+        <Suspense fallback={null}>
+          <Decouverte />
+        </Suspense>
       </section>
 
       <section id="boutiques" className="px-6 py-16 md:px-12">
