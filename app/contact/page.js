@@ -1,4 +1,5 @@
 import TopNav from "../TopNav";
+import Footer from "../Footer";
 
 export const metadata = { title: "Contact — Marketplace" };
 
@@ -32,6 +33,8 @@ export default function Contact() {
           </li>
         </ul>
       </section>
+
+      <Footer />
     </main>
   );
 }

@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import TopNav from "./TopNav";
 import Decouverte from "./Decouverte";
 import Vitrine from "./Vitrine";
+import Footer from "./Footer";
 
 export const dynamic = "force-dynamic";
 
@@ -85,6 +86,8 @@ export default async function Accueil() {
           </ul>
         )}
       </section>
+
+      <Footer />
     </main>
   );
 }

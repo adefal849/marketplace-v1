@@ -21,7 +21,7 @@ export default function TopNav() {
   const [ouvert, setOuvert] = useState(false);
 
   return (
-    <div className="border-b border-line">
+    <div className="sticky top-0 z-30 border-b border-line bg-paper">
       <div className="flex items-center justify-between gap-4 px-6 py-4 md:px-12">
         <Link href="/" className="font-display text-lg">
           Marketplace
