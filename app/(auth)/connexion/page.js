@@ -68,6 +68,10 @@ export default function Connexion() {
           />
         </label>
 
+        <Link href="/mot-de-passe-oublie" className="-mt-2 self-start text-xs underline text-muted">
+          Mot de passe oublié ?
+        </Link>
+
         {erreur && <p className="text-sm">{erreur}</p>}
 
         <button
@@ -76,10 +80,6 @@ export default function Connexion() {
         >
           {chargement ? "Connexion..." : "Se connecter"}
         </button>
-
-        <Link href="/mot-de-passe-oublie" className="text-center text-sm underline">
-          Mot de passe oublié ?
-        </Link>
       </form>
     </main>
   );

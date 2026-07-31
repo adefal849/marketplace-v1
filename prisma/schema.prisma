@@ -29,11 +29,11 @@ model User {
   motDePasse  String
   nom         String
   pays        String?   // code ISO2 (ex: "BJ", "CI", "FR"), sert à personnaliser l'offre
+  resetToken       String?   @unique
+  resetTokenExpire DateTime?
   role        Role      @default(VENDEUR)
   boutique    Boutique?
   createdAt   DateTime  @default(now())
-  resetToken       String?   @unique
-  resetTokenExpiry DateTime?
 }
 
 model Boutique {
