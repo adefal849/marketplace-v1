@@ -14,7 +14,7 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "Marketplace — Vendez en ligne, simplement",
+  title: "Divine Harvest Store — Vendez en ligne, simplement",
   description: "Créez votre boutique en ligne en quelques minutes.",
 };
 

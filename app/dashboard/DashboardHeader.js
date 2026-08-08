@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import ThemeToggle from "../ThemeToggle";
+import LogoDivineHarvest from "../LogoDivineHarvest";
 
 // En-tête compacte partagée par toutes les pages du dashboard vendeur.
 // Seules les 2 sections principales (Tableau de bord / Commandes) restent
@@ -34,8 +35,9 @@ export default function DashboardHeader({ actif, commandesEnAttente = 0, message
     <header className="flex items-center justify-between border-b border-line px-6 py-4">
       {/* Le nom ramène au tableau de bord vendeur, pas à la vitrine
           publique : on reste dans l'espace admin. */}
-      <Link href="/dashboard" className="font-display text-lg">
-        Marketplace
+      <Link href="/dashboard" className="flex items-center gap-1.5 font-display text-lg">
+        <LogoDivineHarvest size={18} />
+        Divine Harvest Store
       </Link>
 
       <nav className="flex items-center gap-5 text-sm">
@@ -59,6 +61,12 @@ export default function DashboardHeader({ actif, commandesEnAttente = 0, message
           className={actif === "messages" ? "font-medium underline" : "hover:underline"}
         >
           Messages{messagesNonLus > 0 ? ` (${messagesNonLus})` : ""}
+        </Link>
+        <Link
+          href="/dashboard/ventes"
+          className={actif === "ventes" ? "font-medium underline" : "hover:underline"}
+        >
+          Ventes
         </Link>
 
         <div ref={menuRef} className="relative">

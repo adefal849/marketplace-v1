@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Store, ChevronDown, Search } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
 import CartBadge from "./CartBadge";
+import LogoDivineHarvest from "./LogoDivineHarvest";
 
 const LIENS = [
   { href: "/", label: "Accueil" },
@@ -33,8 +34,8 @@ export default function TopNav() {
     <div className="sticky top-0 z-30 border-b border-line bg-paper">
       <div className="flex items-center gap-3 px-6 py-3 md:px-12">
         <Link href="/" className="flex shrink-0 items-center gap-1.5 font-display text-lg">
-          <Store size={18} strokeWidth={1.5} />
-          Marketplace
+          <LogoDivineHarvest size={18} />
+          Divine Harvest Store
         </Link>
 
         <form onSubmit={lancerRecherche} className="flex flex-1 items-center border border-line px-3">

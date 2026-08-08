@@ -1,7 +1,7 @@
 import TopNav from "../TopNav";
 import Footer from "../Footer";
 
-export const metadata = { title: "Contact — Marketplace" };
+export const metadata = { title: "Contact — Divine Harvest Store" };
 
 export default function Contact() {
   return (
@@ -23,8 +23,8 @@ export default function Contact() {
           </li>
           <li>
             <p className="text-muted">Email</p>
-            <a href="mailto:adefal849@gmail.com" className="font-display text-lg underline">
-              adefal849@gmail.com
+            <a href="mailto:DivineHarvestStore@gmail.com" className="font-display text-lg underline">
+              DivineHarvestStore@gmail.com
             </a>
           </li>
           <li>

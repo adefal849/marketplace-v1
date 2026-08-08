@@ -35,7 +35,7 @@ export async function POST(request) {
             Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
           },
           body: JSON.stringify({
-            from: process.env.RESEND_FROM || "Marketplace <onboarding@resend.dev>",
+            from: process.env.RESEND_FROM || "Divine Harvest Store <onboarding@resend.dev>",
             to: user.email,
             subject: "Réinitialisation de votre mot de passe",
             html: `<p>Bonjour ${user.nom},</p><p>Cliquez sur ce lien pour choisir un nouveau mot de passe (valable 1h) :</p><p><a href="${lien}">${lien}</a></p><p>Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.</p>`,
