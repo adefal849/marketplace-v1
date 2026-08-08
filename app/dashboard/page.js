@@ -6,13 +6,15 @@ import DashboardHeader from "./DashboardHeader";
 import { CATEGORIES } from "../categories";
 import { TrendingUp } from "lucide-react";
 import UploadMedia from "../UploadMedia";
+import OnboardingChecklist from "./OnboardingChecklist";
+import AssistantVendeur from "./AssistantVendeur";
 
 export default function Dashboard() {
   const router = useRouter();
   const [chargementInitial, setChargementInitial] = useState(true);
   const [boutique, setBoutique] = useState(null);
   const [formBoutique, setFormBoutique] = useState({ nom: "", description: "" });
-  const [formProduit, setFormProduit] = useState({ nom: "", prix: "", stock: "", categorie: "", imageUrl: "" });
+  const [formProduit, setFormProduit] = useState({ nom: "", description: "", prix: "", stock: "", categorie: "", imageUrl: "" });
   const [erreur, setErreur] = useState("");
   const [formOuvert, setFormOuvert] = useState(false);
   const [lienCopie, setLienCopie] = useState(false);
@@ -117,6 +119,7 @@ export default function Dashboard() {
       },
       body: JSON.stringify({
         nom: formProduit.nom,
+        description: formProduit.description || null,
         prix: Number(formProduit.prix),
         stock: Number(formProduit.stock) || 0,
         categorie: formProduit.categorie || null,
@@ -131,7 +134,7 @@ export default function Dashboard() {
     }
 
     setBoutique({ ...boutique, produits: [...boutique.produits, data.produit] });
-    setFormProduit({ nom: "", prix: "", stock: "", categorie: "", imageUrl: "" });
+    setFormProduit({ nom: "", description: "", prix: "", stock: "", categorie: "", imageUrl: "" });
     setFormOuvert(false);
   }
 
@@ -140,6 +143,17 @@ export default function Dashboard() {
     navigator.clipboard.writeText(url);
     setLienCopie(true);
     setTimeout(() => setLienCopie(false), 2000);
+  }
+
+  function appliquerFiche(fiche) {
+    setFormProduit({
+      ...formProduit,
+      nom: fiche.nom || formProduit.nom,
+      description: fiche.description || formProduit.description,
+      prix: fiche.prix !== "" ? String(fiche.prix) : formProduit.prix,
+      categorie: fiche.categorie || formProduit.categorie,
+    });
+    setFormOuvert(true);
   }
 
   if (chargementInitial) {
@@ -226,8 +240,14 @@ export default function Dashboard() {
               )}
             </div>
 
+            <div className="mt-6">
+              <OnboardingChecklist boutique={boutique} onAjouterProduit={() => setFormOuvert(true)} />
+            </div>
+
             {/* Bouton pour déplier le formulaire d'ajout de produit */}
-            <section className="mt-6 max-w-md">
+            <section className="mt-6 flex max-w-md flex-col gap-3">
+              <AssistantVendeur onAppliquerFiche={appliquerFiche} />
+
               <button
                 onClick={() => setFormOuvert(!formOuvert)}
                 className="w-full border border-ink px-4 py-3 text-left font-display text-lg"
@@ -255,6 +275,16 @@ export default function Dashboard() {
                       className="border border-line px-3 py-2"
                       value={formProduit.prix}
                       onChange={(e) => setFormProduit({ ...formProduit, prix: e.target.value })}
+                    />
+                  </label>
+
+                  <label className="flex flex-col gap-1 text-sm">
+                    Description
+                    <textarea
+                      rows={3}
+                      className="border border-line px-3 py-2"
+                      value={formProduit.description}
+                      onChange={(e) => setFormProduit({ ...formProduit, description: e.target.value })}
                     />
                   </label>
 

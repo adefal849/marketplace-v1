@@ -11,7 +11,9 @@ export default function Parametres() {
   const [utilisateur, setUtilisateur] = useState(null);
   const [boutique, setBoutique] = useState(null);
   const [nom, setNom] = useState("");
+  const [descriptionBoutique, setDescriptionBoutique] = useState("");
   const [message, setMessage] = useState("");
+  const [messageBoutique, setMessageBoutique] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -35,6 +37,7 @@ export default function Parametres() {
     setUtilisateur(dataUser.utilisateur);
     setNom(dataUser.utilisateur?.nom || "");
     setBoutique(dataBoutique.boutique);
+    setDescriptionBoutique(dataBoutique.boutique?.description || "");
     setChargement(false);
   }
 
@@ -68,6 +71,25 @@ export default function Parametres() {
     });
     if (res.ok) {
       setBoutique({ ...boutique, logoUrl: url });
+    }
+  }
+
+  async function enregistrerDescriptionBoutique(e) {
+    e.preventDefault();
+    setMessageBoutique("");
+    const token = localStorage.getItem("token");
+
+    const res = await fetch("/api/boutiques/me", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ description: descriptionBoutique }),
+    });
+
+    if (res.ok) {
+      setBoutique({ ...boutique, description: descriptionBoutique });
+      setMessageBoutique("Description mise à jour.");
+    } else {
+      setMessageBoutique("Erreur lors de la mise à jour.");
     }
   }
 
@@ -124,7 +146,7 @@ export default function Parametres() {
         {/* Photo de profil de la boutique */}
         {boutique && (
           <section className="mt-6 border border-line p-4">
-            <h2 className="font-display text-lg">Photo de la boutique</h2>
+            <h2 className="font-display text-lg">Photo et description de la boutique</h2>
             <p className="mt-1 text-sm text-muted">
               Visible en haut de votre page boutique, comme une photo de profil.
             </p>
@@ -139,6 +161,22 @@ export default function Parametres() {
             <div className="mt-3">
               <UploadMedia label="Changer la photo" onUploaded={enregistrerLogo} />
             </div>
+
+            <form onSubmit={enregistrerDescriptionBoutique} className="mt-5 flex flex-col gap-3 border-t border-line pt-5">
+              <label className="flex flex-col gap-1 text-sm">
+                Description de la boutique
+                <textarea
+                  rows={3}
+                  className="border border-line px-3 py-2"
+                  value={descriptionBoutique}
+                  onChange={(e) => setDescriptionBoutique(e.target.value)}
+                />
+              </label>
+              {messageBoutique && <p className="text-sm">{messageBoutique}</p>}
+              <button className="self-start border border-ink bg-ink px-4 py-2 text-sm text-paper hover:bg-paper hover:text-ink transition-colors">
+                Enregistrer
+              </button>
+            </form>
           </section>
         )}
 
