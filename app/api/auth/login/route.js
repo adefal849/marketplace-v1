@@ -1,9 +1,21 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifierMotDePasse, creerToken } from "@/lib/auth";
+import { limiterTaux, ipDepuisRequete } from "@/lib/rateLimit";
 
 export async function POST(request) {
   const { email, motDePasse } = await request.json();
+
+  const { autorise, attendreSec } = limiterTaux(`login:${ipDepuisRequete(request)}:${email}`, {
+    max: 5,
+    fenetreMs: 60_000,
+  });
+  if (!autorise) {
+    return NextResponse.json(
+      { erreur: `Trop de tentatives. Réessayez dans ${attendreSec}s.` },
+      { status: 429 }
+    );
+  }
 
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user) {
