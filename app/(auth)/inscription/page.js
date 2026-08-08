@@ -3,8 +3,15 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import BackButton from "../../BackButton";
+import { Store } from "lucide-react";
+import AuthShell from "../AuthShell";
 import { PAYS, drapeau } from "../../pays";
+
+const champ =
+  "w-full rounded-lg border-2 border-line bg-paper px-3 py-2.5 outline-none transition-colors focus:border-forest focus:ring-2 focus:ring-gold/40 dark:border-line-dark dark:bg-forest-deep";
+
+const bouton =
+  "mt-4 flex items-center justify-center gap-2 rounded-lg border-2 border-forest-deep bg-gold px-4 py-3 font-semibold text-forest-deep shadow-[3px_4px_0_0_#12301F] transition-transform hover:-translate-y-0.5 active:translate-y-0 active:shadow-none disabled:opacity-50 disabled:hover:translate-y-0";
 
 export default function Inscription() {
   const router = useRouter();
@@ -36,22 +43,26 @@ export default function Inscription() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-md flex-col px-6 py-16">
-      <BackButton secours="/" texte="Accueil" />
-      <h1 className="mt-4 font-display text-3xl">Créer votre compte vendeur</h1>
-      <p className="mt-2 text-sm text-muted">
-        Déjà inscrit ?{" "}
-        <Link href="/connexion" className="underline">
-          Connectez-vous
-        </Link>
-      </p>
-
-      <form onSubmit={onSubmit} className="mt-10 flex flex-col gap-4">
+    <AuthShell
+      retourVers="/"
+      retourTexte="Accueil"
+      eyebrow="Devenir vendeur"
+      titre="Créer votre compte vendeur"
+      sousTitre={
+        <>
+          Déjà inscrit ?{" "}
+          <Link href="/connexion" className="font-medium text-forest underline dark:text-gold">
+            Connectez-vous
+          </Link>
+        </>
+      }
+    >
+      <form onSubmit={onSubmit} className="mt-6 flex flex-col gap-4">
         <label className="flex flex-col gap-1 text-sm">
           Nom
           <input
             required
-            className="border border-line px-3 py-2 focus-visible:outline-none"
+            className={champ}
             value={form.nom}
             onChange={(e) => setForm({ ...form, nom: e.target.value })}
           />
@@ -62,7 +73,7 @@ export default function Inscription() {
           <input
             required
             type="email"
-            className="border border-line px-3 py-2"
+            className={champ}
             value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })}
           />
@@ -74,7 +85,7 @@ export default function Inscription() {
             required
             type="password"
             minLength={6}
-            className="border border-line px-3 py-2"
+            className={champ}
             value={form.motDePasse}
             onChange={(e) => setForm({ ...form, motDePasse: e.target.value })}
           />
@@ -84,7 +95,7 @@ export default function Inscription() {
           Pays
           <select
             required
-            className="border border-line px-3 py-2"
+            className={champ}
             value={form.pays}
             onChange={(e) => setForm({ ...form, pays: e.target.value })}
           >
@@ -97,15 +108,13 @@ export default function Inscription() {
           </select>
         </label>
 
-        {erreur && <p className="text-sm">{erreur}</p>}
+        {erreur && <p className="rounded-lg bg-berry/10 px-3 py-2 text-sm text-berry">{erreur}</p>}
 
-        <button
-          disabled={chargement}
-          className="mt-4 border border-ink bg-ink px-4 py-3 text-paper hover:bg-paper hover:text-ink transition-colors disabled:opacity-50"
-        >
+        <button disabled={chargement} className={bouton}>
+          <Store size={16} />
           {chargement ? "Création..." : "Créer mon compte"}
         </button>
       </form>
-    </main>
+    </AuthShell>
   );
 }
