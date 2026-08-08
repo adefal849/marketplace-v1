@@ -1,58 +1,59 @@
 import Link from "next/link";
-import { Suspense } from "react";
 import { ShoppingBag, Store } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import TopNav from "./TopNav";
-import Decouverte from "./Decouverte";
+import ArticlesFeed from "./ArticlesFeed";
 import Vitrine from "./Vitrine";
 import Footer from "./Footer";
-import HeroFiligrane from "./HeroFiligrane";
-import AccueilConnecte from "./AccueilConnecte";
 
 export const dynamic = "force-dynamic";
 
 export default async function Accueil() {
-  const boutiques = await prisma.boutique.findMany({
-    where: { actif: true },
-    select: { nom: true, slug: true, description: true },
-    orderBy: { createdAt: "desc" },
-  });
+  const [produits, boutiques] = await Promise.all([
+    prisma.produit.findMany({
+      where: { actif: true, boutique: { actif: true } },
+      include: { boutique: { select: { nom: true, slug: true } } },
+      orderBy: { createdAt: "desc" },
+      take: 60,
+    }),
+    prisma.boutique.findMany({
+      where: { actif: true },
+      select: { nom: true, slug: true, description: true },
+      orderBy: { createdAt: "desc" },
+    }),
+  ]);
 
   return (
     <main className="min-h-screen">
       <TopNav />
-      <AccueilConnecte />
 
-      {/* Hero : filigrane en arrière-plan + message publicitaire + choix
-          acheter/vendre. Masqué automatiquement pour les vendeurs déjà
-          connectés (voir AccueilConnecte) qui vont direct aux boutiques. */}
-      <section
-        id="hero"
-        className="relative overflow-hidden border-b border-line px-6 py-20 md:px-12 md:py-28"
-      >
-        <HeroFiligrane />
+      {/* Les articles en premier : c'est ce que les gens viennent voir */}
+      <section id="articles" className="px-6 py-10 md:px-12">
+        <ArticlesFeed produits={produits} />
+      </section>
 
-        <div className="relative">
-          <h1 className="max-w-2xl font-display text-4xl leading-tight md:text-6xl">
-            Chaque boutique a une adresse. Chaque vente vous appartient.
-          </h1>
-          <p className="mt-6 max-w-xl text-muted">
-            La marketplace qui connecte acheteurs et vendeurs, sans intermédiaire.
-            Trouvez ce qu'il vous faut, ou ouvrez votre boutique en quelques minutes.
-          </p>
-
-          <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:max-w-md">
+      {/* Bandeau vendre, condensé, sous les articles plutôt qu'en pleine
+          page d'accueil */}
+      <section className="border-y border-line px-6 py-10 md:px-12">
+        <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+          <div>
+            <h2 className="font-display text-xl">Vous vendez aussi ?</h2>
+            <p className="mt-1 text-sm text-muted">
+              Ouvrez votre boutique en quelques minutes, sans intermédiaire.
+            </p>
+          </div>
+          <div className="flex w-full gap-3 sm:w-auto">
             <a
-              href="#decouverte"
-              className="flex flex-1 items-center justify-center gap-2 border border-ink bg-ink px-5 py-4 text-sm text-paper transition-colors hover:bg-paper hover:text-ink"
+              href="#articles"
+              className="flex flex-1 items-center justify-center gap-2 border border-line px-4 py-2.5 text-sm sm:flex-none"
             >
-              <ShoppingBag size={16} /> Je veux acheter
+              <ShoppingBag size={15} /> Acheter
             </a>
             <Link
               href="/inscription"
-              className="flex flex-1 items-center justify-center gap-2 border border-ink px-5 py-4 text-sm transition-colors hover:bg-ink hover:text-paper"
+              className="flex flex-1 items-center justify-center gap-2 border border-ink bg-ink px-4 py-2.5 text-sm text-paper transition-colors hover:bg-paper hover:text-ink sm:flex-none"
             >
-              <Store size={16} /> Je veux vendre
+              <Store size={15} /> Vendre
             </Link>
           </div>
         </div>
@@ -60,13 +61,7 @@ export default async function Accueil() {
 
       <Vitrine />
 
-      {/* Recherche + catégories + résultats */}
-      <section id="decouverte" className="border-b border-line px-6 py-12 md:px-12">
-        <Suspense fallback={null}>
-          <Decouverte />
-        </Suspense>
-      </section>
-
+      {/* Boutiques, pour ceux qui préfèrent parcourir par vendeur */}
       <section id="boutiques" className="px-6 py-16 md:px-12">
         <h2 className="mb-8 font-display text-2xl">Boutiques</h2>
 

@@ -121,10 +121,11 @@ export default function AssistantChat({ slug, boutiqueNom, questionExterne }) {
 
       <button
         onClick={() => setOuvert(!ouvert)}
-        className="flex items-center gap-2 border border-ink bg-ink px-4 py-3 text-sm text-paper shadow-lg transition-colors hover:bg-paper hover:text-ink"
+        aria-label="Assistant boutique"
+        className="flex items-center gap-2 border border-ink bg-ink p-3 text-sm text-paper shadow-lg transition-colors hover:bg-paper hover:text-ink sm:px-4"
       >
         {ouvert ? <X size={16} /> : <Bot size={16} />}
-        {ouvert ? "Fermer" : "Une question ?"}
+        <span className="hidden sm:inline">{ouvert ? "Fermer" : "Une question ?"}</span>
       </button>
     </div>
   );

@@ -162,10 +162,11 @@ export default function ContactVendeurChat({ slug, boutiqueNom }) {
 
       <button
         onClick={() => setOuvert(!ouvert)}
-        className="flex items-center gap-2 border border-current px-4 py-3 text-sm shadow-lg transition-colors hover:bg-ink hover:text-paper"
+        aria-label="Discuter avec le vendeur"
+        className="flex items-center gap-2 border border-current bg-paper p-3 text-sm shadow-lg transition-colors hover:bg-ink hover:text-paper sm:px-4"
       >
         {ouvert ? <X size={16} /> : <User size={16} />}
-        {ouvert ? "Fermer" : "Discuter avec le vendeur"}
+        <span className="hidden sm:inline">{ouvert ? "Fermer" : "Discuter avec le vendeur"}</span>
       </button>
     </div>
   );

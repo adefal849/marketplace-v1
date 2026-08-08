@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Check } from "lucide-react";
+import { Check, Store } from "lucide-react";
 import { useCart } from "../../CartContext";
+import { estVideo } from "../../media";
 import AssistantChat from "./AssistantChat";
 import ContactVendeurChat from "./ContactVendeurChat";
 import BackButton from "../../BackButton";
@@ -36,16 +37,31 @@ export default function BoutiqueClient({ boutique }) {
     <>
       <BackButton secours="/" texte="Toutes les boutiques" />
 
+      {/* En-tête façon profil : photo (ou icône par défaut), nom, description */}
       <header className="flex items-start justify-between gap-4 border-b border-line pb-8">
-        <div>
-          <h1 className="font-display text-4xl">{boutique.nom}</h1>
-          {boutique.description && (
-            <p className="mt-2 max-w-xl text-muted">{boutique.description}</p>
+        <div className="flex items-center gap-4">
+          {boutique.logoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={boutique.logoUrl}
+              alt={boutique.nom}
+              className="h-16 w-16 shrink-0 rounded-full object-cover"
+            />
+          ) : (
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-line">
+              <Store size={24} strokeWidth={1.5} />
+            </div>
           )}
+          <div>
+            <h1 className="font-display text-3xl md:text-4xl">{boutique.nom}</h1>
+            {boutique.description && (
+              <p className="mt-1 max-w-xl text-sm text-muted">{boutique.description}</p>
+            )}
+          </div>
         </div>
         <Link
           href="/panier"
-          className="whitespace-nowrap border border-current px-3 py-1 text-xs"
+          className="shrink-0 whitespace-nowrap border border-current px-3 py-1 text-xs"
         >
           Panier{nombreArticles > 0 ? ` (${nombreArticles})` : ""}
         </Link>
@@ -77,12 +93,23 @@ export default function BoutiqueClient({ boutique }) {
                   </div>
 
                   {p.imageUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={p.imageUrl}
-                      alt={p.nom}
-                      className="aspect-square w-full object-cover"
-                    />
+                    estVideo(p.imageUrl) ? (
+                      <video
+                        src={p.imageUrl}
+                        className="aspect-square w-full object-cover"
+                        muted
+                        loop
+                        playsInline
+                        controls
+                      />
+                    ) : (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={p.imageUrl}
+                        alt={p.nom}
+                        className="aspect-square w-full object-cover"
+                      />
+                    )
                   ) : (
                     <div className="aspect-square w-full bg-line" />
                   )}

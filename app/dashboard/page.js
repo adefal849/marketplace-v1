@@ -5,13 +5,14 @@ import { useRouter } from "next/navigation";
 import DashboardHeader from "./DashboardHeader";
 import { CATEGORIES } from "../categories";
 import { TrendingUp } from "lucide-react";
+import UploadMedia from "../UploadMedia";
 
 export default function Dashboard() {
   const router = useRouter();
   const [chargementInitial, setChargementInitial] = useState(true);
   const [boutique, setBoutique] = useState(null);
   const [formBoutique, setFormBoutique] = useState({ nom: "", description: "" });
-  const [formProduit, setFormProduit] = useState({ nom: "", prix: "", stock: "", categorie: "" });
+  const [formProduit, setFormProduit] = useState({ nom: "", prix: "", stock: "", categorie: "", imageUrl: "" });
   const [erreur, setErreur] = useState("");
   const [formOuvert, setFormOuvert] = useState(false);
   const [lienCopie, setLienCopie] = useState(false);
@@ -119,6 +120,7 @@ export default function Dashboard() {
         prix: Number(formProduit.prix),
         stock: Number(formProduit.stock) || 0,
         categorie: formProduit.categorie || null,
+        imageUrl: formProduit.imageUrl || null,
       }),
     });
     const data = await res.json();
@@ -129,7 +131,7 @@ export default function Dashboard() {
     }
 
     setBoutique({ ...boutique, produits: [...boutique.produits, data.produit] });
-    setFormProduit({ nom: "", prix: "", stock: "", categorie: "" });
+    setFormProduit({ nom: "", prix: "", stock: "", categorie: "", imageUrl: "" });
     setFormOuvert(false);
   }
 
@@ -281,6 +283,13 @@ export default function Dashboard() {
                       onChange={(e) => setFormProduit({ ...formProduit, stock: e.target.value })}
                     />
                   </label>
+
+                  <UploadMedia
+                    onUploaded={(url) => setFormProduit({ ...formProduit, imageUrl: url })}
+                  />
+                  {formProduit.imageUrl && (
+                    <p className="text-xs text-muted">Fichier envoyé ✓</p>
+                  )}
 
                   {erreur && <p className="text-sm">{erreur}</p>}
 

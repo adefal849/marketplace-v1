@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import DashboardHeader from "../DashboardHeader";
+import UploadMedia from "../../UploadMedia";
 
 export default function Parametres() {
   const router = useRouter();
@@ -58,6 +59,18 @@ export default function Parametres() {
     }
   }
 
+  async function enregistrerLogo(url) {
+    const token = localStorage.getItem("token");
+    const res = await fetch("/api/boutiques/me", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ logoUrl: url }),
+    });
+    if (res.ok) {
+      setBoutique({ ...boutique, logoUrl: url });
+    }
+  }
+
   async function supprimerProduit(id) {
     const token = localStorage.getItem("token");
     const res = await fetch(`/api/produits/${id}`, {
@@ -107,6 +120,27 @@ export default function Parametres() {
             </button>
           </form>
         </section>
+
+        {/* Photo de profil de la boutique */}
+        {boutique && (
+          <section className="mt-6 border border-line p-4">
+            <h2 className="font-display text-lg">Photo de la boutique</h2>
+            <p className="mt-1 text-sm text-muted">
+              Visible en haut de votre page boutique, comme une photo de profil.
+            </p>
+            {boutique.logoUrl && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={boutique.logoUrl}
+                alt={boutique.nom}
+                className="mt-3 h-20 w-20 rounded-full object-cover"
+              />
+            )}
+            <div className="mt-3">
+              <UploadMedia label="Changer la photo" onUploaded={enregistrerLogo} />
+            </div>
+          </section>
+        )}
 
         {/* Produits : suppression */}
         {boutique && (
