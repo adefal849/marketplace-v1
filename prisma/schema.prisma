@@ -32,7 +32,7 @@ model User {
   resetToken       String?   @unique
   resetTokenExpire DateTime?
   role        Role      @default(VENDEUR)
-  boutique    Boutique?
+  boutiques   Boutique[] // jusqu'à 4, plafond appliqué dans le code (voir /api/boutiques)
   createdAt   DateTime  @default(now())
 }
 
@@ -44,11 +44,13 @@ model Boutique {
   logoUrl       String?
   actif         Boolean        @default(true) // permet à l'admin de suspendre
   vendeur       User           @relation(fields: [vendeurId], references: [id])
-  vendeurId     String         @unique
+  vendeurId     String
   produits      Produit[]
   commandes     Commande[]
   conversations Conversation[]
   createdAt     DateTime       @default(now())
+
+  @@index([vendeurId])
 }
 
 model Produit {

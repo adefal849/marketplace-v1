@@ -81,6 +81,9 @@ export default function Commandes() {
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
                     <p className="font-display">{c.clientNom}</p>
+                    {c.boutique?.nom && (
+                      <p className="text-xs text-muted">{c.boutique.nom}</p>
+                    )}
                     <p className="text-sm text-muted">
                       {c.clientEmail}
                       {c.clientTel ? ` — ${c.clientTel}` : ""}

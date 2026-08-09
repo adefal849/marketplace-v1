@@ -7,8 +7,10 @@ import { getUserFromRequest } from "@/lib/auth";
 async function trouverVendeurProprietaire(request, conversation) {
   const user = getUserFromRequest(request);
   if (!user) return null;
-  const boutique = await prisma.boutique.findUnique({ where: { vendeurId: user.id } });
-  return boutique && boutique.id === conversation.boutiqueId ? user : null;
+  const boutique = await prisma.boutique.findFirst({
+    where: { id: conversation.boutiqueId, vendeurId: user.id },
+  });
+  return boutique ? user : null;
 }
 
 export async function GET(request, { params }) {

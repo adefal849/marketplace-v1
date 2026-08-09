@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getUserFromRequest } from "@/lib/auth";
 import slugify from "slugify";
 
-// Créer une boutique (un vendeur = une boutique en V1)
+// Créer une boutique (jusqu'à 4 par vendeur)
 export async function POST(request) {
   const user = getUserFromRequest(request);
   if (!user) {
@@ -18,12 +18,10 @@ export async function POST(request) {
     );
   }
 
-  const dejaExistante = await prisma.boutique.findUnique({
-    where: { vendeurId: user.id },
-  });
-  if (dejaExistante) {
+  const nombreBoutiques = await prisma.boutique.count({ where: { vendeurId: user.id } });
+  if (nombreBoutiques >= 4) {
     return NextResponse.json(
-      { erreur: "Ce vendeur a déjà une boutique." },
+      { erreur: "Maximum 4 boutiques par compte." },
       { status: 409 }
     );
   }

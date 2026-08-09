@@ -4,23 +4,32 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import DashboardHeader from "./DashboardHeader";
 import { CATEGORIES } from "../categories";
-import { TrendingUp } from "lucide-react";
+import { TrendingUp, Sparkles, X, Store, Bell, Palette, Plus } from "lucide-react";
 import UploadMedia from "../UploadMedia";
-import OnboardingChecklist from "./OnboardingChecklist";
-import AssistantVendeur from "./AssistantVendeur";
+
+const CLE_BOUTIQUE_ACTIVE = "boutiqueActiveId";
 
 export default function Dashboard() {
   const router = useRouter();
   const [chargementInitial, setChargementInitial] = useState(true);
-  const [boutique, setBoutique] = useState(null);
+  const [boutiques, setBoutiques] = useState([]);
+  const [boutiqueActiveId, setBoutiqueActiveId] = useState(null);
+  const [boutique, setBoutique] = useState(null); // boutique active, avec ses produits
+  const [nouvelleBoutiqueOuverte, setNouvelleBoutiqueOuverte] = useState(false);
   const [formBoutique, setFormBoutique] = useState({ nom: "", description: "" });
-  const [formProduit, setFormProduit] = useState({ nom: "", description: "", prix: "", stock: "", categorie: "", imageUrl: "" });
+  const [formProduit, setFormProduit] = useState({ nom: "", prix: "", stock: "", categorie: "", imageUrl: "" });
   const [erreur, setErreur] = useState("");
   const [formOuvert, setFormOuvert] = useState(false);
   const [lienCopie, setLienCopie] = useState(false);
   const [commandesEnAttente, setCommandesEnAttente] = useState(0);
   const [messagesNonLus, setMessagesNonLus] = useState(0);
   const [tendances, setTendances] = useState([]);
+  const [ficheIaOuverte, setFicheIaOuverte] = useState(false);
+  const [descriptionIa, setDescriptionIa] = useState("");
+  const [genereEnCours, setGenereEnCours] = useState(false);
+  const [erreurIa, setErreurIa] = useState("");
+  const [cardsFermees, setCardsFermees] = useState([]);
+  const [descriptionGeneree, setDescriptionGeneree] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -28,10 +37,17 @@ export default function Dashboard() {
       router.push("/connexion");
       return;
     }
-    chargerBoutique(token);
+    chargerBoutiques(token);
     chargerCommandes(token);
     chargerMessages(token);
+    setCardsFermees(JSON.parse(localStorage.getItem("checklistFermee") || "[]"));
   }, [router]);
+
+  function fermerCard(id) {
+    const suite = [...cardsFermees, id];
+    setCardsFermees(suite);
+    localStorage.setItem("checklistFermee", JSON.stringify(suite));
+  }
 
   async function chargerMessages(token) {
     try {
@@ -47,7 +63,8 @@ export default function Dashboard() {
   }
 
   // Une seule requête sert à la fois le badge "en attente" et le
-  // classement des produits qui se vendent le mieux (tendances).
+  // classement des produits qui se vendent le mieux (toutes boutiques
+  // confondues, tendances).
   async function chargerCommandes(token) {
     try {
       const res = await fetch("/api/commandes", {
@@ -75,8 +92,29 @@ export default function Dashboard() {
     }
   }
 
-  async function chargerBoutique(token) {
+  async function chargerBoutiques(token) {
     const res = await fetch("/api/boutiques/me", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await res.json();
+    const liste = data.boutiques || [];
+    setBoutiques(liste);
+
+    if (liste.length > 0) {
+      const idStocke = localStorage.getItem(CLE_BOUTIQUE_ACTIVE);
+      const active = liste.find((b) => b.id === idStocke) || liste[0];
+      await selectionnerBoutique(active.id, token);
+    } else {
+      setChargementInitial(false);
+    }
+  }
+
+  async function selectionnerBoutique(id, tokenParam) {
+    const token = tokenParam || localStorage.getItem("token");
+    localStorage.setItem(CLE_BOUTIQUE_ACTIVE, id);
+    setBoutiqueActiveId(id);
+
+    const res = await fetch(`/api/boutiques/me?id=${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     const data = await res.json();
@@ -103,7 +141,46 @@ export default function Dashboard() {
       setErreur(data.erreur);
       return;
     }
-    setBoutique({ ...data.boutique, produits: [] });
+
+    setBoutiques([...boutiques, data.boutique]);
+    setFormBoutique({ nom: "", description: "" });
+    setNouvelleBoutiqueOuverte(false);
+    await selectionnerBoutique(data.boutique.id, token);
+  }
+
+  async function genererFiche() {
+    if (!descriptionIa.trim()) return;
+    setErreurIa("");
+    setGenereEnCours(true);
+    const token = localStorage.getItem("token");
+
+    try {
+      const res = await fetch("/api/generer-fiche", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ description: descriptionIa }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setErreurIa(data.erreur || "Échec de la génération.");
+        return;
+      }
+
+      setFormProduit({
+        ...formProduit,
+        nom: data.nom,
+        categorie: data.categorie || formProduit.categorie,
+      });
+      setDescriptionGeneree(data.description);
+      setFicheIaOuverte(false);
+      setFormOuvert(true);
+      setDescriptionIa("");
+    } catch {
+      setErreurIa("Échec de la génération, réessayez.");
+    } finally {
+      setGenereEnCours(false);
+    }
   }
 
   async function ajouterProduit(e) {
@@ -119,11 +196,12 @@ export default function Dashboard() {
       },
       body: JSON.stringify({
         nom: formProduit.nom,
-        description: formProduit.description || null,
         prix: Number(formProduit.prix),
         stock: Number(formProduit.stock) || 0,
         categorie: formProduit.categorie || null,
         imageUrl: formProduit.imageUrl || null,
+        description: descriptionGeneree || null,
+        boutiqueId: boutique.id,
       }),
     });
     const data = await res.json();
@@ -134,7 +212,8 @@ export default function Dashboard() {
     }
 
     setBoutique({ ...boutique, produits: [...boutique.produits, data.produit] });
-    setFormProduit({ nom: "", description: "", prix: "", stock: "", categorie: "", imageUrl: "" });
+    setFormProduit({ nom: "", prix: "", stock: "", categorie: "", imageUrl: "" });
+    setDescriptionGeneree("");
     setFormOuvert(false);
   }
 
@@ -143,17 +222,6 @@ export default function Dashboard() {
     navigator.clipboard.writeText(url);
     setLienCopie(true);
     setTimeout(() => setLienCopie(false), 2000);
-  }
-
-  function appliquerFiche(fiche) {
-    setFormProduit({
-      ...formProduit,
-      nom: fiche.nom || formProduit.nom,
-      description: fiche.description || formProduit.description,
-      prix: fiche.prix !== "" ? String(fiche.prix) : formProduit.prix,
-      categorie: fiche.categorie || formProduit.categorie,
-    });
-    setFormOuvert(true);
   }
 
   if (chargementInitial) {
@@ -170,11 +238,65 @@ export default function Dashboard() {
       />
 
       <div className="px-6 py-8 md:px-12">
+        {/* Sélecteur de boutiques : un compte peut en avoir jusqu'à 4 */}
+        {boutiques.length > 0 && (
+          <div className="mb-6 flex gap-2 overflow-x-auto whitespace-nowrap pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {boutiques.map((b) => (
+              <button
+                key={b.id}
+                onClick={() => selectionnerBoutique(b.id)}
+                className={`shrink-0 border px-4 py-2 text-sm ${
+                  b.id === boutiqueActiveId ? "border-ink bg-ink text-paper" : "border-line"
+                }`}
+              >
+                {b.nom}
+              </button>
+            ))}
+            {boutiques.length < 4 && (
+              <button
+                onClick={() => setNouvelleBoutiqueOuverte(!nouvelleBoutiqueOuverte)}
+                className="flex shrink-0 items-center gap-1.5 border border-dashed border-line px-4 py-2 text-sm text-muted"
+              >
+                <Plus size={14} /> Nouvelle boutique
+              </button>
+            )}
+          </div>
+        )}
+
+        {nouvelleBoutiqueOuverte && (
+          <section className="mb-8 max-w-md border border-line p-4">
+            <h2 className="font-display text-lg">Nouvelle boutique</h2>
+            <form onSubmit={creerBoutique} className="mt-4 flex flex-col gap-4">
+              <label className="flex flex-col gap-1 text-sm">
+                Nom de la boutique
+                <input
+                  required
+                  className="border border-line px-3 py-2"
+                  value={formBoutique.nom}
+                  onChange={(e) => setFormBoutique({ ...formBoutique, nom: e.target.value })}
+                />
+              </label>
+              <label className="flex flex-col gap-1 text-sm">
+                Description
+                <textarea
+                  className="border border-line px-3 py-2"
+                  value={formBoutique.description}
+                  onChange={(e) => setFormBoutique({ ...formBoutique, description: e.target.value })}
+                />
+              </label>
+              {erreur && <p className="text-sm">{erreur}</p>}
+              <button className="mt-2 border border-ink bg-ink px-4 py-3 text-paper hover:bg-paper hover:text-ink transition-colors">
+                Créer cette boutique
+              </button>
+            </form>
+          </section>
+        )}
+
         {!boutique ? (
           <section className="max-w-md">
             <h2 className="font-display text-xl">Créez votre boutique</h2>
             <p className="mt-1 text-sm text-muted">
-              Votre boutique sera accessible sur /boutique/votre-nom.
+              Votre boutique sera accessible sur /boutique/votre-nom. Vous pourrez en ajouter jusqu'à 4 par compte.
             </p>
 
             <form onSubmit={creerBoutique} className="mt-6 flex flex-col gap-4">
@@ -206,11 +328,72 @@ export default function Dashboard() {
           </section>
         ) : (
           <>
-            {/* Boutique + lien à copier + tendances, sur une même ligne compacte */}
+            {/* Checklist de démarrage, façon Shopify : chaque carte se ferme
+                d'un clic et reste fermée (mémorisée localement). */}
+            {(() => {
+              const cartes = [
+                {
+                  id: "produit",
+                  visible: boutique.produits.length === 0,
+                  Icone: Store,
+                  titre: "Ajoutez votre premier produit",
+                  texte: "Commencez par un nom, un prix et une photo.",
+                  action: () => setFormOuvert(true),
+                  bouton: "Ajouter un produit",
+                },
+                {
+                  id: `logo-${boutique.id}`,
+                  visible: !boutique.logoUrl,
+                  Icone: Palette,
+                  titre: "Ajoutez une photo à votre boutique",
+                  texte: "Elle s'affiche comme une photo de profil sur votre page.",
+                  lien: "/dashboard/parametres",
+                  bouton: "Ajouter une photo",
+                },
+                {
+                  id: "notifs",
+                  visible: true,
+                  Icone: Bell,
+                  titre: "Restez informé",
+                  texte: "Commandes et messages arrivent ici, en haut à droite.",
+                  bouton: null,
+                },
+              ].filter((c) => c.visible && !cardsFermees.includes(c.id));
+
+              if (cartes.length === 0) return null;
+
+              return (
+                <div className="mb-8 flex flex-col gap-3">
+                  {cartes.map((c) => (
+                    <div key={c.id} className="flex items-start gap-3 border border-line p-4">
+                      <c.Icone size={20} strokeWidth={1.5} className="mt-0.5 shrink-0" />
+                      <div className="flex-1">
+                        <p className="font-display text-base">{c.titre}</p>
+                        <p className="mt-1 text-sm text-muted">{c.texte}</p>
+                        {c.bouton &&
+                          (c.lien ? (
+                            <a href={c.lien} className="mt-2 inline-block text-xs underline">
+                              {c.bouton}
+                            </a>
+                          ) : (
+                            <button onClick={c.action} className="mt-2 text-xs underline">
+                              {c.bouton}
+                            </button>
+                          ))}
+                      </div>
+                      <button onClick={() => fermerCard(c.id)} aria-label="Fermer">
+                        <X size={16} className="text-muted" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              );
+            })()}
+
             <div className="flex flex-col gap-4 md:flex-row">
               <section className="flex flex-wrap items-center gap-3 border border-line p-4 md:flex-1">
                 <div>
-                  <p className="text-sm text-muted">Votre boutique</p>
+                  <p className="text-sm text-muted">Boutique active</p>
                   <p className="font-display text-lg">{boutique.nom}</p>
                 </div>
                 <div className="ml-auto flex items-center gap-2">
@@ -226,7 +409,7 @@ export default function Dashboard() {
               {tendances.length > 0 && (
                 <section className="border border-line p-4 md:w-64">
                   <p className="flex items-center gap-1.5 text-sm text-muted">
-                    <TrendingUp size={14} /> Tendances
+                    <TrendingUp size={14} /> Tendances (toutes boutiques)
                   </p>
                   <ul className="mt-2 flex flex-col gap-1 text-sm">
                     {tendances.map((t, i) => (
@@ -240,23 +423,54 @@ export default function Dashboard() {
               )}
             </div>
 
-            <div className="mt-6">
-              <OnboardingChecklist boutique={boutique} onAjouterProduit={() => setFormOuvert(true)} />
-            </div>
-
             {/* Bouton pour déplier le formulaire d'ajout de produit */}
-            <section className="mt-6 flex max-w-md flex-col gap-3">
-              <AssistantVendeur onAppliquerFiche={appliquerFiche} />
+            <section className="mt-6 max-w-md">
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setFormOuvert(!formOuvert)}
+                  className="flex-1 border border-ink px-4 py-3 text-left font-display text-lg"
+                >
+                  {formOuvert ? "− Fermer" : "+ Ajouter un produit"}
+                </button>
+                <button
+                  onClick={() => setFicheIaOuverte(!ficheIaOuverte)}
+                  className="flex items-center gap-1.5 border border-ink bg-ink px-3 text-xs text-paper"
+                  title="Générer une fiche avec l'IA"
+                >
+                  <Sparkles size={14} /> IA
+                </button>
+              </div>
 
-              <button
-                onClick={() => setFormOuvert(!formOuvert)}
-                className="w-full border border-ink px-4 py-3 text-left font-display text-lg"
-              >
-                {formOuvert ? "− Fermer" : "+ Ajouter un produit"}
-              </button>
+              {ficheIaOuverte && (
+                <div className="mt-4 flex flex-col gap-3 border border-line p-4">
+                  <p className="text-sm text-muted">
+                    Décrivez le produit en une phrase, l'IA rédige le nom et la description.
+                  </p>
+                  <textarea
+                    value={descriptionIa}
+                    onChange={(e) => setDescriptionIa(e.target.value)}
+                    placeholder="Ex: sac à main en cuir marron, fait main, pour femme"
+                    className="border border-line px-3 py-2 text-sm"
+                    rows={3}
+                  />
+                  {erreurIa && <p className="text-sm">{erreurIa}</p>}
+                  <button
+                    onClick={genererFiche}
+                    disabled={genereEnCours || !descriptionIa.trim()}
+                    className="flex items-center justify-center gap-1.5 border border-ink bg-ink px-4 py-2.5 text-sm text-paper disabled:opacity-40"
+                  >
+                    <Sparkles size={14} /> {genereEnCours ? "Génération..." : "Générer la fiche"}
+                  </button>
+                </div>
+              )}
 
               {formOuvert && (
                 <form onSubmit={ajouterProduit} className="mt-4 flex flex-col gap-4 border border-line p-4">
+                  {descriptionGeneree && (
+                    <p className="border border-line bg-line/10 p-3 text-xs text-muted">
+                      Description IA : {descriptionGeneree}
+                    </p>
+                  )}
                   <label className="flex flex-col gap-1 text-sm">
                     Nom du produit
                     <input
@@ -275,16 +489,6 @@ export default function Dashboard() {
                       className="border border-line px-3 py-2"
                       value={formProduit.prix}
                       onChange={(e) => setFormProduit({ ...formProduit, prix: e.target.value })}
-                    />
-                  </label>
-
-                  <label className="flex flex-col gap-1 text-sm">
-                    Description
-                    <textarea
-                      rows={3}
-                      className="border border-line px-3 py-2"
-                      value={formProduit.description}
-                      onChange={(e) => setFormProduit({ ...formProduit, description: e.target.value })}
                     />
                   </label>
 

@@ -10,13 +10,13 @@ export async function GET(request) {
     return NextResponse.json({ erreur: "Non authentifié." }, { status: 401 });
   }
 
-  const boutique = await prisma.boutique.findUnique({ where: { vendeurId: user.id } });
-  if (!boutique) {
+  const boutiques = await prisma.boutique.findMany({ where: { vendeurId: user.id } });
+  if (boutiques.length === 0) {
     return NextResponse.json({ erreur: "Aucune boutique." }, { status: 404 });
   }
 
   const commandes = await prisma.commande.findMany({
-    where: { boutiqueId: boutique.id, statut: { not: "ANNULEE" } },
+    where: { boutiqueId: { in: boutiques.map((b) => b.id) }, statut: { not: "ANNULEE" } },
     include: { lignes: { include: { produit: { select: { nom: true } } } } },
     orderBy: { createdAt: "asc" },
   });

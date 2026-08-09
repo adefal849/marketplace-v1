@@ -32,7 +32,7 @@ export default function Footer() {
 
       <div className="flex flex-col gap-4 px-6 py-8 text-sm text-muted sm:flex-row sm:items-center sm:justify-between md:px-12">
         <p>© {new Date().getFullYear()} Divine Harvest Store</p>
-        <nav className="flex gap-5">
+        <nav className="flex flex-wrap gap-x-5 gap-y-2">
           <Link href="/#boutiques" className="hover:text-ink hover:underline">
             Boutiques
           </Link>
@@ -44,6 +44,15 @@ export default function Footer() {
           </Link>
           <Link href="/contact" className="hover:text-ink hover:underline">
             Contact
+          </Link>
+          <Link href="/mentions-legales" className="hover:text-ink hover:underline">
+            Mentions légales
+          </Link>
+          <Link href="/confidentialite" className="hover:text-ink hover:underline">
+            Confidentialité
+          </Link>
+          <Link href="/cgv" className="hover:text-ink hover:underline">
+            CGV
           </Link>
         </nav>
       </div>

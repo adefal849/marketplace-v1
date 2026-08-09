@@ -140,17 +140,21 @@ export async function GET(request) {
     return NextResponse.json({ erreur: "Non authentifié." }, { status: 401 });
   }
 
-  const boutique = await prisma.boutique.findUnique({
+  const boutiques = await prisma.boutique.findMany({
     where: { vendeurId: user.id },
+    select: { id: true },
   });
 
-  if (!boutique) {
+  if (boutiques.length === 0) {
     return NextResponse.json({ commandes: [] });
   }
 
   const commandes = await prisma.commande.findMany({
-    where: { boutiqueId: boutique.id },
-    include: { lignes: { include: { produit: { select: { nom: true } } } } },
+    where: { boutiqueId: { in: boutiques.map((b) => b.id) } },
+    include: {
+      lignes: { include: { produit: { select: { nom: true } } } },
+      boutique: { select: { nom: true } },
+    },
     orderBy: { createdAt: "desc" },
   });
 

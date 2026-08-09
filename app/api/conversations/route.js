@@ -38,20 +38,25 @@ export async function POST(request) {
   return NextResponse.json({ conversationId: conversation.id });
 }
 
-// Le vendeur liste les conversations de sa boutique, plus récentes d'abord.
+// Le vendeur liste les conversations de toutes ses boutiques, plus
+// récentes d'abord — une seule boîte de réception pour tout le compte.
 export async function GET(request) {
   const user = getUserFromRequest(request);
   if (!user) {
     return NextResponse.json({ erreur: "Non authentifié." }, { status: 401 });
   }
 
-  const boutique = await prisma.boutique.findUnique({ where: { vendeurId: user.id } });
-  if (!boutique) {
+  const boutiques = await prisma.boutique.findMany({
+    where: { vendeurId: user.id },
+    select: { id: true, nom: true },
+  });
+  if (boutiques.length === 0) {
     return NextResponse.json({ conversations: [] });
   }
+  const nomParBoutique = new Map(boutiques.map((b) => [b.id, b.nom]));
 
   const conversations = await prisma.conversation.findMany({
-    where: { boutiqueId: boutique.id },
+    where: { boutiqueId: { in: boutiques.map((b) => b.id) } },
     include: {
       messages: { orderBy: { createdAt: "desc" }, take: 1 },
       _count: { select: { messages: { where: { auteur: "CLIENT", lu: false } } } },
@@ -64,6 +69,7 @@ export async function GET(request) {
       id: c.id,
       clientNom: c.clientNom,
       clientEmail: c.clientEmail,
+      boutiqueNom: nomParBoutique.get(c.boutiqueId) || "",
       dernierMessage: c.messages[0]?.contenu || "",
       nonLus: c._count.messages,
       updatedAt: c.updatedAt,
