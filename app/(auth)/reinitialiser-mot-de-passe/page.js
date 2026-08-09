@@ -2,14 +2,7 @@
 
 import { Suspense, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { KeyRound, CheckCircle2 } from "lucide-react";
-import AuthShell from "../AuthShell";
-
-const champ =
-  "w-full rounded-lg border-2 border-line bg-paper px-3 py-2.5 outline-none transition-colors focus:border-forest focus:ring-2 focus:ring-gold/40 dark:border-line-dark dark:bg-forest-deep";
-
-const bouton =
-  "mt-4 flex items-center justify-center gap-2 rounded-lg border-2 border-forest-deep bg-gold px-4 py-3 font-semibold text-forest-deep shadow-[3px_4px_0_0_#12301F] transition-transform hover:-translate-y-0.5 active:translate-y-0 active:shadow-none disabled:opacity-50 disabled:hover:translate-y-0";
+import BackButton from "../../BackButton";
 
 function FormulaireReinitialisation() {
   const router = useRouter();
@@ -43,40 +36,33 @@ function FormulaireReinitialisation() {
   }
 
   if (!token) {
-    return (
-      <p className="mt-6 rounded-lg border-2 border-berry bg-berry/10 p-4 text-sm text-berry">
-        Lien invalide. Refaites une demande depuis la page de connexion.
-      </p>
-    );
+    return <p className="mt-8 text-sm">Lien invalide. Refaites une demande depuis la page de connexion.</p>;
   }
 
   if (succes) {
-    return (
-      <p className="mt-6 flex items-center gap-2 rounded-lg border-2 border-forest bg-forest/5 p-4 text-sm dark:border-gold dark:bg-transparent">
-        <CheckCircle2 size={18} className="shrink-0 text-forest dark:text-gold" />
-        Mot de passe mis à jour, redirection...
-      </p>
-    );
+    return <p className="mt-8 border border-line p-4 text-sm">Mot de passe mis à jour, redirection...</p>;
   }
 
   return (
-    <form onSubmit={onSubmit} className="mt-6 flex flex-col gap-4">
+    <form onSubmit={onSubmit} className="mt-8 flex flex-col gap-4">
       <label className="flex flex-col gap-1 text-sm">
         Nouveau mot de passe
         <input
           required
           minLength={6}
           type="password"
-          className={champ}
+          className="border border-line px-3 py-2"
           value={motDePasse}
           onChange={(e) => setMotDePasse(e.target.value)}
         />
       </label>
 
-      {erreur && <p className="rounded-lg bg-berry/10 px-3 py-2 text-sm text-berry">{erreur}</p>}
+      {erreur && <p className="text-sm">{erreur}</p>}
 
-      <button disabled={chargement} className={bouton}>
-        <KeyRound size={16} />
+      <button
+        disabled={chargement}
+        className="mt-4 border border-ink bg-ink px-4 py-3 text-paper hover:bg-paper hover:text-ink transition-colors disabled:opacity-50"
+      >
         {chargement ? "Enregistrement..." : "Choisir ce mot de passe"}
       </button>
     </form>
@@ -85,10 +71,13 @@ function FormulaireReinitialisation() {
 
 export default function ReinitialiserMotDePasse() {
   return (
-    <AuthShell retourVers="/connexion" retourTexte="Connexion" eyebrow="Récupération" titre="Nouveau mot de passe">
+    <main className="mx-auto flex min-h-screen max-w-md flex-col px-6 py-16">
+      <BackButton secours="/connexion" texte="Connexion" />
+      <h1 className="mt-4 font-display text-3xl">Nouveau mot de passe</h1>
+
       <Suspense fallback={null}>
         <FormulaireReinitialisation />
       </Suspense>
-    </AuthShell>
+    </main>
   );
 }

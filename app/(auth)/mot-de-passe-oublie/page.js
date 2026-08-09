@@ -2,14 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Mail, CheckCircle2 } from "lucide-react";
-import AuthShell from "../AuthShell";
-
-const champ =
-  "w-full rounded-lg border-2 border-line bg-paper px-3 py-2.5 outline-none transition-colors focus:border-forest focus:ring-2 focus:ring-gold/40 dark:border-line-dark dark:bg-forest-deep";
-
-const bouton =
-  "mt-4 flex items-center justify-center gap-2 rounded-lg border-2 border-forest-deep bg-gold px-4 py-3 font-semibold text-forest-deep shadow-[3px_4px_0_0_#12301F] transition-transform hover:-translate-y-0.5 active:translate-y-0 active:shadow-none disabled:opacity-50 disabled:hover:translate-y-0";
+import BackButton from "../../BackButton";
 
 export default function MotDePasseOublie() {
   const [email, setEmail] = useState("");
@@ -29,44 +22,45 @@ export default function MotDePasseOublie() {
   }
 
   return (
-    <AuthShell
-      retourVers="/connexion"
-      retourTexte="Connexion"
-      eyebrow="Récupération"
-      titre="Mot de passe oublié"
-      sousTitre="Entrez l'email de votre compte vendeur, on vous envoie un lien pour en choisir un nouveau."
-    >
+    <main className="mx-auto flex min-h-screen max-w-md flex-col px-6 py-16">
+      <BackButton secours="/connexion" texte="Connexion" />
+      <h1 className="mt-4 font-display text-3xl">Mot de passe oublié</h1>
+      <p className="mt-2 text-sm text-muted">
+        Entrez l'email de votre compte vendeur, on vous envoie un lien pour en choisir un nouveau.
+      </p>
+
       {envoye ? (
-        <p className="mt-6 flex items-start gap-2 rounded-lg border-2 border-forest bg-forest/5 p-4 text-sm dark:border-gold dark:bg-transparent">
-          <CheckCircle2 size={18} className="mt-0.5 shrink-0 text-forest dark:text-gold" />
+        <p className="mt-8 border border-line p-4 text-sm">
           Si un compte existe avec cet email, un lien de réinitialisation vient d'être envoyé.
           Pensez à vérifier vos spams.
         </p>
       ) : (
-        <form onSubmit={onSubmit} className="mt-6 flex flex-col gap-4">
+        <form onSubmit={onSubmit} className="mt-8 flex flex-col gap-4">
           <label className="flex flex-col gap-1 text-sm">
             Email
             <input
               required
               type="email"
-              className={champ}
+              className="border border-line px-3 py-2"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </label>
 
-          <button disabled={chargement} className={bouton}>
-            <Mail size={16} />
+          <button
+            disabled={chargement}
+            className="mt-4 border border-ink bg-ink px-4 py-3 text-paper hover:bg-paper hover:text-ink transition-colors disabled:opacity-50"
+          >
             {chargement ? "Envoi..." : "Envoyer le lien"}
           </button>
         </form>
       )}
 
       <p className="mt-6 text-sm text-muted">
-        <Link href="/connexion" className="font-medium text-forest underline dark:text-gold">
+        <Link href="/connexion" className="underline">
           Retour à la connexion
         </Link>
       </p>
-    </AuthShell>
+    </main>
   );
 }

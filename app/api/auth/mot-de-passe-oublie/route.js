@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
-import { limiterTaux, ipDepuisRequete, echapperHtml } from "@/lib/rateLimit";
 
 // On répond toujours la même chose, que l'email existe ou non, pour ne
 // pas laisser deviner quels emails ont un compte (énumération de comptes).
@@ -15,13 +14,6 @@ export async function POST(request) {
     return NextResponse.json({ erreur: "Email requis." }, { status: 400 });
   }
 
-  const { autorise } = limiterTaux(`reset:${ipDepuisRequete(request)}`, { max: 3, fenetreMs: 5 * 60_000 });
-  if (!autorise) {
-    // Même message générique : ne pas révéler qu'une limite a été atteinte
-    // ne coûte rien et évite de donner un signal à un script.
-    return NextResponse.json(MESSAGE_GENERIQUE);
-  }
-
   const user = await prisma.user.findUnique({ where: { email } });
 
   if (user) {
@@ -31,12 +23,8 @@ export async function POST(request) {
       data: { resetToken: token, resetTokenExpire: new Date(Date.now() + 60 * 60 * 1000) },
     });
 
-    // On préfère l'URL publique déclarée en variable d'environnement à
-    // l'en-tête "Origin" de la requête : ce dernier peut être falsifié par
-    // un client mal intentionné, ce qui enverrait un lien de réinitialisation
-    // pointant vers un site de phishing.
-    const site = process.env.NEXT_PUBLIC_SITE_URL || request.headers.get("origin") || "";
-    const lien = `${site}/reinitialiser-mot-de-passe?token=${token}`;
+    const origine = request.headers.get("origin") || "";
+    const lien = `${origine}/reinitialiser-mot-de-passe?token=${token}`;
 
     if (process.env.RESEND_API_KEY) {
       try {
@@ -50,7 +38,7 @@ export async function POST(request) {
             from: process.env.RESEND_FROM || "Divine Harvest Store <onboarding@resend.dev>",
             to: user.email,
             subject: "Réinitialisation de votre mot de passe",
-            html: `<p>Bonjour ${echapperHtml(user.nom)},</p><p>Cliquez sur ce lien pour choisir un nouveau mot de passe (valable 1h) :</p><p><a href="${lien}">${lien}</a></p><p>Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.</p>`,
+            html: `<p>Bonjour ${user.nom},</p><p>Cliquez sur ce lien pour choisir un nouveau mot de passe (valable 1h) :</p><p><a href="${lien}">${lien}</a></p><p>Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.</p>`,
           }),
         });
       } catch {
