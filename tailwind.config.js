@@ -7,9 +7,8 @@ module.exports = {
   ],
   theme: {
     extend: {
-      // Palette de base : noir et blanc pour les pages produit/dashboard
-      // (lisibilité, sérieux). Un accent chaleureux "récolte" réservé aux
-      // pages marketing (accueil, connexion, inscription).
+      // Palette élargie : noir/blanc pour la structure, mais couleur
+      // partout où ça donne de la vie — CTA, badges, IA, succès.
       colors: {
         paper: "#ffffff",
         ink: "#0a0a0a",
@@ -19,6 +18,10 @@ module.exports = {
         accent: "#d97706",
         "accent-dark": "#92400e",
         "accent-light": "#fef3c7",
+        leaf: "#15803d",
+        "leaf-light": "#dcfce7",
+        ia: "#7c3aed",
+        "ia-light": "#ede9fe",
       },
       fontFamily: {
         display: ["var(--font-display)", "sans-serif"],

@@ -81,12 +81,12 @@ export default function BoutiqueClient({ boutique }) {
                   {/* Badges discrets, façon grandes marketplaces */}
                   <div className="absolute left-4 top-4 flex flex-col gap-1">
                     {nouveau && (
-                      <span className="w-fit bg-ink px-2 py-0.5 text-[10px] uppercase tracking-wide text-paper">
+                      <span className="w-fit rounded-full bg-leaf px-2 py-0.5 text-[10px] uppercase tracking-wide text-paper">
                         Nouveau
                       </span>
                     )}
                     {stockFaible && (
-                      <span className="w-fit bg-paper px-2 py-0.5 text-[10px] uppercase tracking-wide text-ink ring-1 ring-ink">
+                      <span className="w-fit rounded-full bg-accent px-2 py-0.5 text-[10px] uppercase tracking-wide text-paper">
                         Plus que {p.stock}
                       </span>
                     )}
@@ -118,7 +118,7 @@ export default function BoutiqueClient({ boutique }) {
                   <button
                     onClick={() => handleAjouter(p)}
                     disabled={p.stock <= 0}
-                    className="mt-3 flex items-center justify-center gap-1.5 border border-ink px-3 py-2 text-xs transition-colors hover:bg-ink hover:text-paper disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-ink"
+                    className="mt-3 flex items-center justify-center gap-1.5 rounded-full bg-accent px-3 py-2 text-xs text-paper transition-transform hover:scale-[1.03] active:scale-95 disabled:opacity-40 disabled:hover:scale-100"
                   >
                     {p.stock <= 0 ? (
                       "Rupture de stock"

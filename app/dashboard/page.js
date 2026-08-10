@@ -6,6 +6,7 @@ import DashboardHeader from "./DashboardHeader";
 import { CATEGORIES } from "../categories";
 import { TrendingUp, Sparkles, X, Store, Bell, Palette, Plus } from "lucide-react";
 import UploadMedia from "../UploadMedia";
+import AssistantVendeur from "./AssistantVendeur";
 
 const CLE_BOUTIQUE_ACTIVE = "boutiqueActiveId";
 
@@ -25,6 +26,7 @@ export default function Dashboard() {
   const [messagesNonLus, setMessagesNonLus] = useState(0);
   const [tendances, setTendances] = useState([]);
   const [ficheIaOuverte, setFicheIaOuverte] = useState(false);
+  const [ficheGenerateurOuvert, setFicheGenerateurOuvert] = useState(false);
   const [descriptionIa, setDescriptionIa] = useState("");
   const [genereEnCours, setGenereEnCours] = useState(false);
   const [erreurIa, setErreurIa] = useState("");
@@ -174,6 +176,7 @@ export default function Dashboard() {
       });
       setDescriptionGeneree(data.description);
       setFicheIaOuverte(false);
+      setFicheGenerateurOuvert(false);
       setFormOuvert(true);
       setDescriptionIa("");
     } catch {
@@ -246,7 +249,7 @@ export default function Dashboard() {
                 key={b.id}
                 onClick={() => selectionnerBoutique(b.id)}
                 className={`shrink-0 border px-4 py-2 text-sm ${
-                  b.id === boutiqueActiveId ? "border-ink bg-ink text-paper" : "border-line"
+                  b.id === boutiqueActiveId ? "border-accent bg-accent text-paper" : "border-line"
                 }`}
               >
                 {b.nom}
@@ -255,7 +258,7 @@ export default function Dashboard() {
             {boutiques.length < 4 && (
               <button
                 onClick={() => setNouvelleBoutiqueOuverte(!nouvelleBoutiqueOuverte)}
-                className="flex shrink-0 items-center gap-1.5 border border-dashed border-line px-4 py-2 text-sm text-muted"
+                className="flex shrink-0 items-center gap-1.5 rounded-full border border-dashed border-accent px-4 py-2 text-sm text-accent-dark"
               >
                 <Plus size={14} /> Nouvelle boutique
               </button>
@@ -285,7 +288,7 @@ export default function Dashboard() {
                 />
               </label>
               {erreur && <p className="text-sm">{erreur}</p>}
-              <button className="mt-2 border border-ink bg-ink px-4 py-3 text-paper hover:bg-paper hover:text-ink transition-colors">
+              <button className="mt-2 rounded-full bg-accent px-4 py-3 text-paper transition-transform hover:scale-[1.02] active:scale-95">
                 Créer cette boutique
               </button>
             </form>
@@ -321,7 +324,7 @@ export default function Dashboard() {
 
               {erreur && <p className="text-sm">{erreur}</p>}
 
-              <button className="mt-4 border border-ink bg-ink px-4 py-3 text-paper hover:bg-paper hover:text-ink transition-colors">
+              <button className="mt-4 rounded-full bg-accent px-4 py-3 text-paper transition-transform hover:scale-[1.02] active:scale-95">
                 Créer ma boutique
               </button>
             </form>
@@ -336,6 +339,7 @@ export default function Dashboard() {
                   id: "produit",
                   visible: boutique.produits.length === 0,
                   Icone: Store,
+                  couleur: "bg-accent-light text-accent-dark",
                   titre: "Ajoutez votre premier produit",
                   texte: "Commencez par un nom, un prix et une photo.",
                   action: () => setFormOuvert(true),
@@ -345,6 +349,7 @@ export default function Dashboard() {
                   id: `logo-${boutique.id}`,
                   visible: !boutique.logoUrl,
                   Icone: Palette,
+                  couleur: "bg-ia-light text-ia",
                   titre: "Ajoutez une photo à votre boutique",
                   texte: "Elle s'affiche comme une photo de profil sur votre page.",
                   lien: "/dashboard/parametres",
@@ -354,6 +359,7 @@ export default function Dashboard() {
                   id: "notifs",
                   visible: true,
                   Icone: Bell,
+                  couleur: "bg-leaf-light text-leaf",
                   titre: "Restez informé",
                   texte: "Commandes et messages arrivent ici, en haut à droite.",
                   bouton: null,
@@ -366,7 +372,9 @@ export default function Dashboard() {
                 <div className="mb-8 flex flex-col gap-3">
                   {cartes.map((c) => (
                     <div key={c.id} className="flex items-start gap-3 border border-line p-4">
-                      <c.Icone size={20} strokeWidth={1.5} className="mt-0.5 shrink-0" />
+                      <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${c.couleur}`}>
+                        <c.Icone size={18} strokeWidth={1.5} />
+                      </span>
                       <div className="flex-1">
                         <p className="font-display text-base">{c.titre}</p>
                         <p className="mt-1 text-sm text-muted">{c.texte}</p>
@@ -434,33 +442,39 @@ export default function Dashboard() {
                 </button>
                 <button
                   onClick={() => setFicheIaOuverte(!ficheIaOuverte)}
-                  className="flex items-center gap-1.5 border border-ink bg-ink px-3 text-xs text-paper"
-                  title="Générer une fiche avec l'IA"
+                  className="flex items-center gap-1.5 rounded-full bg-ia px-3 text-xs text-paper"
+                  title="Assistant IA"
                 >
-                  <Sparkles size={14} /> IA
+                  <Sparkles size={14} /> Assistant IA
                 </button>
               </div>
 
               {ficheIaOuverte && (
-                <div className="mt-4 flex flex-col gap-3 border border-line p-4">
-                  <p className="text-sm text-muted">
-                    Décrivez le produit en une phrase, l'IA rédige le nom et la description.
-                  </p>
-                  <textarea
-                    value={descriptionIa}
-                    onChange={(e) => setDescriptionIa(e.target.value)}
-                    placeholder="Ex: sac à main en cuir marron, fait main, pour femme"
-                    className="border border-line px-3 py-2 text-sm"
-                    rows={3}
-                  />
-                  {erreurIa && <p className="text-sm">{erreurIa}</p>}
-                  <button
-                    onClick={genererFiche}
-                    disabled={genereEnCours || !descriptionIa.trim()}
-                    className="flex items-center justify-center gap-1.5 border border-ink bg-ink px-4 py-2.5 text-sm text-paper disabled:opacity-40"
-                  >
-                    <Sparkles size={14} /> {genereEnCours ? "Génération..." : "Générer la fiche"}
-                  </button>
+                <div className="mt-4 flex flex-col gap-4">
+                  <AssistantVendeur onFicheDemandee={() => setFicheGenerateurOuvert(true)} />
+
+                  {ficheGenerateurOuvert && (
+                    <div className="flex flex-col gap-3 border border-line p-4">
+                      <p className="text-sm text-muted">
+                        Décrivez le produit en une phrase, l'IA rédige le nom et la description.
+                      </p>
+                      <textarea
+                        value={descriptionIa}
+                        onChange={(e) => setDescriptionIa(e.target.value)}
+                        placeholder="Ex: sac à main en cuir marron, fait main, pour femme"
+                        className="border border-line px-3 py-2 text-sm"
+                        rows={3}
+                      />
+                      {erreurIa && <p className="text-sm">{erreurIa}</p>}
+                      <button
+                        onClick={genererFiche}
+                        disabled={genereEnCours || !descriptionIa.trim()}
+                        className="flex items-center justify-center gap-1.5 rounded-full bg-ia px-4 py-2.5 text-sm text-paper disabled:opacity-40"
+                      >
+                        <Sparkles size={14} /> {genereEnCours ? "Génération..." : "Générer la fiche"}
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -527,7 +541,7 @@ export default function Dashboard() {
 
                   {erreur && <p className="text-sm">{erreur}</p>}
 
-                  <button className="mt-2 border border-ink bg-ink px-4 py-3 text-paper hover:bg-paper hover:text-ink transition-colors">
+                  <button className="mt-2 rounded-full bg-accent px-4 py-3 text-paper transition-transform hover:scale-[1.02] active:scale-95">
                     Ajouter le produit
                   </button>
                 </form>

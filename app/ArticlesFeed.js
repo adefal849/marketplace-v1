@@ -38,7 +38,7 @@ function Feed({ produits }) {
       <div className="mt-4 flex gap-2 overflow-x-auto whitespace-nowrap pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <button
           onClick={() => setCategorie(null)}
-          className={`shrink-0 border px-3 py-1.5 text-xs ${!categorie ? "border-ink bg-ink text-paper" : "border-line"}`}
+          className={`shrink-0 rounded-full border px-3 py-1.5 text-xs transition-colors ${!categorie ? "border-accent bg-accent text-paper" : "border-line hover:border-accent"}`}
         >
           Tout
         </button>
@@ -46,8 +46,8 @@ function Feed({ produits }) {
           <button
             key={c.valeur}
             onClick={() => setCategorie(categorie === c.valeur ? null : c.valeur)}
-            className={`flex shrink-0 items-center gap-1.5 border px-3 py-1.5 text-xs ${
-              categorie === c.valeur ? "border-ink bg-ink text-paper" : "border-line"
+            className={`flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition-colors ${
+              categorie === c.valeur ? "border-accent bg-accent text-paper" : "border-line hover:border-accent"
             }`}
           >
             <CategoryIcon nom={c.icone} size={14} /> {c.label}
