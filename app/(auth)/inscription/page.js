@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Eye, EyeOff } from "lucide-react";
 import BackButton from "../../BackButton";
 import GoogleSignIn from "../../GoogleSignIn";
 import LogoDivineHarvest from "../../LogoDivineHarvest";
@@ -13,6 +14,7 @@ export default function Inscription() {
   const [form, setForm] = useState({ nom: "", email: "", motDePasse: "", pays: "" });
   const [erreur, setErreur] = useState("");
   const [chargement, setChargement] = useState(false);
+  const [motDePasseVisible, setMotDePasseVisible] = useState(false);
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -38,11 +40,13 @@ export default function Inscription() {
   }
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-ink text-paper">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full bg-accent opacity-25 blur-3xl"
-      />
+    <main className="relative min-h-screen bg-ink text-paper">
+      {/* Voir le même correctif sur /connexion : overflow-hidden déplacé du
+          <main> vers ce conteneur décoratif, pour ne plus bloquer le
+          défilement de la page. */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+        <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-accent opacity-25 blur-3xl" />
+      </div>
 
       <div className="relative mx-auto flex min-h-screen max-w-md flex-col px-6 py-16">
         <BackButton secours="/" texte="Accueil" />
@@ -93,14 +97,24 @@ export default function Inscription() {
 
           <label className="flex flex-col gap-1 text-sm">
             Mot de passe
-            <input
-              required
-              type="password"
-              minLength={6}
-              className="border border-paper/20 bg-transparent px-3 py-3 outline-none focus:border-accent"
-              value={form.motDePasse}
-              onChange={(e) => setForm({ ...form, motDePasse: e.target.value })}
-            />
+            <div className="flex items-center border border-paper/20 focus-within:border-accent">
+              <input
+                required
+                type={motDePasseVisible ? "text" : "password"}
+                minLength={6}
+                className="w-full bg-transparent px-3 py-3 outline-none"
+                value={form.motDePasse}
+                onChange={(e) => setForm({ ...form, motDePasse: e.target.value })}
+              />
+              <button
+                type="button"
+                onClick={() => setMotDePasseVisible(!motDePasseVisible)}
+                aria-label={motDePasseVisible ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                className="px-3 text-paper/50 hover:text-paper"
+              >
+                {motDePasseVisible ? <EyeOff size={17} /> : <Eye size={17} />}
+              </button>
+            </div>
           </label>
 
           <label className="flex flex-col gap-1 text-sm">

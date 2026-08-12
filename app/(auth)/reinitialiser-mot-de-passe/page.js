@@ -2,6 +2,7 @@
 
 import { Suspense, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
 import BackButton from "../../BackButton";
 
 function FormulaireReinitialisation() {
@@ -13,6 +14,7 @@ function FormulaireReinitialisation() {
   const [erreur, setErreur] = useState("");
   const [chargement, setChargement] = useState(false);
   const [succes, setSucces] = useState(false);
+  const [motDePasseVisible, setMotDePasseVisible] = useState(false);
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -47,14 +49,24 @@ function FormulaireReinitialisation() {
     <form onSubmit={onSubmit} className="mt-8 flex flex-col gap-4">
       <label className="flex flex-col gap-1 text-sm">
         Nouveau mot de passe
-        <input
-          required
-          minLength={6}
-          type="password"
-          className="border border-line px-3 py-2"
-          value={motDePasse}
-          onChange={(e) => setMotDePasse(e.target.value)}
-        />
+        <div className="flex items-center border border-line focus-within:border-ink">
+          <input
+            required
+            minLength={6}
+            type={motDePasseVisible ? "text" : "password"}
+            className="w-full px-3 py-2 outline-none"
+            value={motDePasse}
+            onChange={(e) => setMotDePasse(e.target.value)}
+          />
+          <button
+            type="button"
+            onClick={() => setMotDePasseVisible(!motDePasseVisible)}
+            aria-label={motDePasseVisible ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+            className="px-3 text-muted hover:text-ink"
+          >
+            {motDePasseVisible ? <EyeOff size={17} /> : <Eye size={17} />}
+          </button>
+        </div>
       </label>
 
       {erreur && <p className="text-sm">{erreur}</p>}

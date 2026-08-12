@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Eye, EyeOff } from "lucide-react";
 import BackButton from "../../BackButton";
 import GoogleSignIn from "../../GoogleSignIn";
 import LogoDivineHarvest from "../../LogoDivineHarvest";
@@ -12,6 +13,7 @@ export default function Connexion() {
   const [form, setForm] = useState({ email: "", motDePasse: "" });
   const [erreur, setErreur] = useState("");
   const [chargement, setChargement] = useState(false);
+  const [motDePasseVisible, setMotDePasseVisible] = useState(false);
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -37,11 +39,15 @@ export default function Connexion() {
   }
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-ink text-paper">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-accent opacity-25 blur-3xl"
-      />
+    <main className="relative min-h-screen bg-ink text-paper">
+      {/* overflow-hidden est ici, sur ce conteneur décoratif seulement — pas
+          sur <main> : le mettre sur toute la page empêchait de faire défiler
+          l'écran quand le formulaire dépassait la hauteur visible (clavier
+          ouvert sur mobile, message d'erreur en plus...), ce qui donnait
+          l'impression que la page était "bloquée". */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+        <div className="absolute -right-32 -top-32 h-96 w-96 rounded-full bg-accent opacity-25 blur-3xl" />
+      </div>
 
       <div className="relative mx-auto flex min-h-screen max-w-md flex-col px-6 py-16">
         <BackButton secours="/" texte="Accueil" />
@@ -82,13 +88,23 @@ export default function Connexion() {
 
           <label className="flex flex-col gap-1 text-sm">
             Mot de passe
-            <input
-              required
-              type="password"
-              className="border border-paper/20 bg-transparent px-3 py-3 outline-none focus:border-accent"
-              value={form.motDePasse}
-              onChange={(e) => setForm({ ...form, motDePasse: e.target.value })}
-            />
+            <div className="flex items-center border border-paper/20 focus-within:border-accent">
+              <input
+                required
+                type={motDePasseVisible ? "text" : "password"}
+                className="w-full bg-transparent px-3 py-3 outline-none"
+                value={form.motDePasse}
+                onChange={(e) => setForm({ ...form, motDePasse: e.target.value })}
+              />
+              <button
+                type="button"
+                onClick={() => setMotDePasseVisible(!motDePasseVisible)}
+                aria-label={motDePasseVisible ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                className="px-3 text-paper/50 hover:text-paper"
+              >
+                {motDePasseVisible ? <EyeOff size={17} /> : <Eye size={17} />}
+              </button>
+            </div>
           </label>
 
           <Link href="/mot-de-passe-oublie" className="-mt-2 self-start text-xs text-paper/50 underline">
