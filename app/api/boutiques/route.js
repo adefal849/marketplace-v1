@@ -18,12 +18,16 @@ export async function POST(request) {
     );
   }
 
-  const nombreBoutiques = await prisma.boutique.count({ where: { vendeurId: user.id } });
-  if (nombreBoutiques >= 4) {
-    return NextResponse.json(
-      { erreur: "Maximum 4 boutiques par compte." },
-      { status: 409 }
-    );
+  // Le compte admin peut ouvrir autant de boutiques qu'il veut, un vendeur
+  // normal reste plafonné à 4.
+  if (user.role !== "ADMIN") {
+    const nombreBoutiques = await prisma.boutique.count({ where: { vendeurId: user.id } });
+    if (nombreBoutiques >= 4) {
+      return NextResponse.json(
+        { erreur: "Maximum 4 boutiques par compte." },
+        { status: 409 }
+      );
+    }
   }
 
   let slugBase = slugify(nom, { lower: true, strict: true });

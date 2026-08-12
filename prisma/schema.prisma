@@ -31,8 +31,9 @@ model User {
   pays        String?   // code ISO2 (ex: "BJ", "CI", "FR"), sert à personnaliser l'offre
   resetToken       String?   @unique
   resetTokenExpire DateTime?
+  cguAccepteesLe   DateTime? // horodatage de l'acceptation des CGU à l'inscription
   role        Role      @default(VENDEUR)
-  boutiques   Boutique[] // jusqu'à 4, plafond appliqué dans le code (voir /api/boutiques)
+  boutiques   Boutique[] // jusqu'à 4 par vendeur normal, illimité pour un ADMIN (voir /api/boutiques)
   createdAt   DateTime  @default(now())
 }
 
@@ -41,13 +42,17 @@ model Boutique {
   nom           String
   slug          String         @unique // utilisé dans /boutique/[slug]
   description   String?
+  apropos       String?        // texte libre plus long, éditable par le vendeur sur sa page publique
   logoUrl       String?
+  bannerUrl     String?
+  couleurAccent String?        // couleur d'accent hex (ex: "#e07a3f"), utilisée sur la page publique
   actif         Boolean        @default(true) // permet à l'admin de suspendre
   vendeur       User           @relation(fields: [vendeurId], references: [id])
   vendeurId     String
   produits      Produit[]
   commandes     Commande[]
   conversations Conversation[]
+  signalements  Signalement[]
   createdAt     DateTime       @default(now())
 
   @@index([vendeurId])
@@ -121,4 +126,25 @@ model Message {
   createdAt      DateTime     @default(now())
 
   @@index([conversationId])
+}
+
+enum StatutSignalement {
+  NOUVEAU
+  TRAITE
+}
+
+// Signalement d'une boutique par un acheteur (produit trompeur, vendeur
+// injoignable, etc.). Déclenche un email à l'admin + apparaît dans son
+// tableau de bord — pas de compte requis pour signaler.
+model Signalement {
+  id          String            @id @default(cuid())
+  boutique    Boutique          @relation(fields: [boutiqueId], references: [id])
+  boutiqueId  String
+  raison      String
+  details     String?
+  clientEmail String?
+  statut      StatutSignalement @default(NOUVEAU)
+  createdAt   DateTime          @default(now())
+
+  @@index([boutiqueId])
 }

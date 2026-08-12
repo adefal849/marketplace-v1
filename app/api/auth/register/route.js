@@ -4,7 +4,7 @@ import { hashMotDePasse, creerToken } from "@/lib/auth";
 import { limiterTaux, ipDepuisRequete } from "@/lib/rateLimit";
 
 export async function POST(request) {
-  const { email, motDePasse, nom, pays } = await request.json();
+  const { email, motDePasse, nom, pays, cguAcceptees } = await request.json();
 
   const { autorise, attendreSec } = limiterTaux(`register:${ipDepuisRequete(request)}`, {
     max: 5,
@@ -20,6 +20,13 @@ export async function POST(request) {
   if (!email || !motDePasse || !nom) {
     return NextResponse.json(
       { erreur: "Email, mot de passe et nom sont requis." },
+      { status: 400 }
+    );
+  }
+
+  if (!cguAcceptees) {
+    return NextResponse.json(
+      { erreur: "Vous devez accepter les conditions d'utilisation pour créer un compte." },
       { status: 400 }
     );
   }
@@ -42,7 +49,7 @@ export async function POST(request) {
   const motDePasseHash = await hashMotDePasse(motDePasse);
 
   const user = await prisma.user.create({
-    data: { email, nom, motDePasse: motDePasseHash, pays: pays || null },
+    data: { email, nom, motDePasse: motDePasseHash, pays: pays || null, cguAccepteesLe: new Date() },
   });
 
   const token = creerToken({ id: user.id, role: user.role });

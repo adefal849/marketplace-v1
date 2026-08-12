@@ -15,6 +15,7 @@ export default function Inscription() {
   const [erreur, setErreur] = useState("");
   const [chargement, setChargement] = useState(false);
   const [motDePasseVisible, setMotDePasseVisible] = useState(false);
+  const [cguAcceptees, setCguAcceptees] = useState(false);
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -24,7 +25,7 @@ export default function Inscription() {
     const res = await fetch("/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      body: JSON.stringify({ ...form, cguAcceptees }),
     });
     const data = await res.json();
 
@@ -135,6 +136,25 @@ export default function Inscription() {
           </label>
 
           {erreur && <p className="text-sm text-accent">{erreur}</p>}
+
+          <label className="flex items-start gap-2 text-xs text-paper/70">
+            <input
+              required
+              type="checkbox"
+              checked={cguAcceptees}
+              onChange={(e) => setCguAcceptees(e.target.checked)}
+              className="mt-0.5"
+            />
+            J&apos;accepte les{" "}
+            <Link href="/cgv" target="_blank" className="text-accent underline">
+              conditions d&apos;utilisation
+            </Link>{" "}
+            et la{" "}
+            <Link href="/confidentialite" target="_blank" className="text-accent underline">
+              politique de confidentialité
+            </Link>
+            .
+          </label>
 
           <button
             disabled={chargement}

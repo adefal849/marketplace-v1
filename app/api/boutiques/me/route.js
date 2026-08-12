@@ -38,9 +38,17 @@ export async function PATCH(request) {
     return NextResponse.json({ erreur: "Non authentifié." }, { status: 401 });
   }
 
-  const { id, logoUrl, description } = await request.json();
+  const { id, nom, logoUrl, bannerUrl, description, apropos, couleurAccent } = await request.json();
   if (!id) {
     return NextResponse.json({ erreur: "id requis." }, { status: 400 });
+  }
+  if (nom !== undefined && !nom.trim()) {
+    return NextResponse.json({ erreur: "Le nom ne peut pas être vide." }, { status: 400 });
+  }
+  // Couleur hex simple, ex: #e07a3f ou #fff — évite d'enregistrer n'importe
+  // quelle chaîne dans un champ qui finit injecté en style CSS.
+  if (couleurAccent !== undefined && couleurAccent !== null && !/^#[0-9a-fA-F]{3,8}$/.test(couleurAccent)) {
+    return NextResponse.json({ erreur: "Couleur invalide." }, { status: 400 });
   }
 
   const appartient = await prisma.boutique.findFirst({ where: { id, vendeurId: user.id } });
@@ -51,8 +59,12 @@ export async function PATCH(request) {
   const boutique = await prisma.boutique.update({
     where: { id },
     data: {
+      ...(nom !== undefined ? { nom: nom.trim() } : {}),
       ...(logoUrl !== undefined ? { logoUrl } : {}),
+      ...(bannerUrl !== undefined ? { bannerUrl } : {}),
       ...(description !== undefined ? { description } : {}),
+      ...(apropos !== undefined ? { apropos: apropos ? String(apropos).slice(0, 2000) : null } : {}),
+      ...(couleurAccent !== undefined ? { couleurAccent } : {}),
     },
   });
 

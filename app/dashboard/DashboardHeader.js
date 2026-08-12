@@ -14,8 +14,8 @@ const SECTIONS = [
   { href: "/dashboard/messages", cle: "messages", label: "Messages" },
   { href: "/dashboard/ventes", cle: "ventes", label: "Ventes" },
   { href: "/dashboard/parametres", cle: "parametres", label: "Paramètres" },
+  { href: "/admin", cle: "admin", label: "Administration" },
 ];
-
 // En-tête sombre façon back-office (barre compacte, menu en tiroir,
 // recherche/notifications/avatar à droite) plutôt qu'une longue liste de
 // liens qui finit par déborder sur mobile.

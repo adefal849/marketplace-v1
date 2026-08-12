@@ -8,6 +8,7 @@ import { estVideo } from "../../media";
 import AssistantChat from "./AssistantChat";
 import ContactVendeurChat from "./ContactVendeurChat";
 import BackButton from "../../BackButton";
+import SignalerBoutique from "./SignalerBoutique";
 
 const SEPT_JOURS_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -33,12 +34,25 @@ export default function BoutiqueClient({ boutique }) {
     });
   }
 
+  // Couleur d'accent choisie par le vendeur : appliquée via variable CSS,
+  // avec la couleur par défaut du thème en repli si rien n'est défini.
+  const styleAccent = boutique.couleurAccent ? { "--accent": boutique.couleurAccent } : undefined;
+
   return (
-    <>
+    <div style={styleAccent}>
       <BackButton secours="/" texte="Toutes les boutiques" />
 
+      {boutique.bannerUrl && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={boutique.bannerUrl}
+          alt=""
+          className="mt-4 h-40 w-full rounded object-cover md:h-56"
+        />
+      )}
+
       {/* En-tête façon profil : photo (ou icône par défaut), nom, description */}
-      <header className="flex items-start justify-between gap-4 border-b border-line pb-8">
+      <header className="flex items-start justify-between gap-4 border-b border-line pb-8 pt-6">
         <div className="flex items-center gap-4">
           {boutique.logoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -57,6 +71,9 @@ export default function BoutiqueClient({ boutique }) {
             {boutique.description && (
               <p className="mt-1 max-w-xl text-sm text-muted">{boutique.description}</p>
             )}
+            <div className="mt-2">
+              <SignalerBoutique slug={boutique.slug} />
+            </div>
           </div>
         </div>
         <Link
@@ -66,6 +83,13 @@ export default function BoutiqueClient({ boutique }) {
           Panier{nombreArticles > 0 ? ` (${nombreArticles})` : ""}
         </Link>
       </header>
+
+      {boutique.apropos && (
+        <div className="border-b border-line py-6">
+          <h2 className="font-display text-sm uppercase tracking-wide text-muted">À propos</h2>
+          <p className="mt-2 whitespace-pre-line text-sm leading-relaxed">{boutique.apropos}</p>
+        </div>
+      )}
 
       <section className="mt-10">
         {boutique.produits.length === 0 ? (
@@ -149,6 +173,6 @@ export default function BoutiqueClient({ boutique }) {
         questionExterne={questionProduit}
       />
       <ContactVendeurChat slug={boutique.slug} boutiqueNom={boutique.nom} />
-    </>
+    </div>
   );
 }

@@ -1,9 +1,8 @@
 import Link from "next/link";
-import { ShoppingBag, Store, ArrowRight } from "lucide-react";
+import { ShoppingBag, Store, ArrowRight, ArrowDown, Sparkles } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import TopNav from "./TopNav";
 import ArticlesFeed from "./ArticlesFeed";
-import Vitrine from "./Vitrine";
 import Footer from "./Footer";
 import LogoDivineHarvest from "./LogoDivineHarvest";
 
@@ -19,7 +18,7 @@ export default async function Accueil() {
     }),
     prisma.boutique.findMany({
       where: { actif: true },
-      select: { nom: true, slug: true, description: true },
+      select: { nom: true, slug: true, description: true, logoUrl: true, couleurAccent: true },
       orderBy: { createdAt: "desc" },
     }),
   ]);
@@ -38,8 +37,9 @@ export default async function Accueil() {
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute -bottom-32 -left-16 h-64 w-64 rounded-full bg-accent-dark opacity-20 blur-3xl"
+          className="pointer-events-none absolute -bottom-32 -left-16 h-64 w-64 rounded-full bg-leaf opacity-20 blur-3xl"
         />
+        <div aria-hidden className="pointer-events-none absolute right-1/3 top-1/2 h-40 w-40 rounded-full bg-ia opacity-20 blur-3xl" />
 
         <div className="relative">
           <div className="flex items-center gap-2 text-accent">
@@ -76,6 +76,16 @@ export default async function Accueil() {
               J'ai déjà un compte <ArrowRight size={14} />
             </Link>
           </div>
+
+          {/* Gros bouton "descendre" plutôt qu'un bandeau qui défile tout
+              seul : la page d'accueil est longue par choix (articles,
+              boutiques...), ce bouton donne juste un point de départ clair. */}
+          <a
+            href="#articles"
+            className="mt-14 flex w-full items-center justify-center gap-2 rounded-full border-2 border-dashed border-paper/30 py-4 text-sm text-paper/70 transition-colors hover:border-paper hover:text-paper sm:w-auto sm:px-10"
+          >
+            Découvrir la marketplace <ArrowDown size={16} />
+          </a>
         </div>
       </section>
 
@@ -84,27 +94,41 @@ export default async function Accueil() {
         <ArticlesFeed produits={produits} />
       </section>
 
-      <Vitrine />
-
-      {/* Boutiques, pour ceux qui préfèrent parcourir par vendeur */}
+      {/* Boutiques, façon profils : logo en rond, nom, un aperçu — on clique
+          et on entre dans la boutique */}
       <section id="boutiques" className="px-6 py-16 md:px-12">
-        <h2 className="mb-8 font-display text-2xl">Boutiques</h2>
+        <div className="flex items-center gap-2">
+          <Sparkles size={18} className="text-accent" />
+          <h2 className="font-display text-2xl">Boutiques</h2>
+        </div>
 
         {boutiques.length === 0 ? (
-          <p className="text-muted">
+          <p className="mt-6 text-muted">
             Aucune boutique pour le moment. Soyez le premier à en ouvrir une.
           </p>
         ) : (
-          <ul className="grid grid-cols-1 gap-px bg-line sm:grid-cols-2 md:grid-cols-3">
+          <ul className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
             {boutiques.map((b) => (
-              <li key={b.slug} className="bg-paper p-6">
-                <Link href={`/boutique/${b.slug}`} className="group">
-                  <h3 className="font-display text-xl group-hover:underline">
-                    {b.nom}
-                  </h3>
-                  {b.description && (
-                    <p className="mt-2 text-sm text-muted">{b.description}</p>
+              <li key={b.slug}>
+                <Link
+                  href={`/boutique/${b.slug}`}
+                  className="group flex h-full flex-col items-center gap-3 border border-line p-6 text-center transition-colors hover:border-ink"
+                  style={b.couleurAccent ? { "--accent": b.couleurAccent } : undefined}
+                >
+                  {b.logoUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={b.logoUrl}
+                      alt={b.nom}
+                      className="h-16 w-16 rounded-full object-cover ring-2 ring-accent/30"
+                    />
+                  ) : (
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-accent-light text-accent-dark">
+                      <Store size={22} strokeWidth={1.5} />
+                    </div>
                   )}
+                  <h3 className="font-display text-lg group-hover:underline">{b.nom}</h3>
+                  {b.description && <p className="line-clamp-2 text-sm text-muted">{b.description}</p>}
                 </Link>
               </li>
             ))}

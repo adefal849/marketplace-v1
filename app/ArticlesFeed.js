@@ -58,9 +58,9 @@ function Feed({ produits }) {
       {filtres.length === 0 ? (
         <p className="mt-8 text-sm text-muted">Aucun article ne correspond.</p>
       ) : (
-        <ul className="mt-6 grid grid-cols-2 gap-px bg-line sm:grid-cols-3 md:grid-cols-4">
+        <ul className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
           {filtres.map((p) => (
-            <li key={p.id} className="bg-paper p-4">
+            <li key={p.id} className="overflow-hidden rounded-xl border border-line bg-paper transition-shadow hover:shadow-md">
               <Link href={`/boutique/${p.boutique.slug}`}>
                 {p.imageUrl ? (
                   estVideo(p.imageUrl) ? (
@@ -72,9 +72,11 @@ function Feed({ produits }) {
                 ) : (
                   <div className="aspect-square w-full bg-line" />
                 )}
-                <h3 className="mt-3 text-sm">{p.nom}</h3>
-                <p className="mt-1 font-display">{p.prix} FCFA</p>
-                <p className="mt-1 text-xs text-muted">{p.boutique.nom}</p>
+                <div className="p-3">
+                  <h3 className="text-sm">{p.nom}</h3>
+                  <p className="mt-1 font-display text-accent">{p.prix} FCFA</p>
+                  <p className="mt-1 text-xs text-muted">{p.boutique.nom}</p>
+                </div>
               </Link>
             </li>
           ))}

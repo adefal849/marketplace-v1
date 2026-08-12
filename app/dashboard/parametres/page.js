@@ -16,6 +16,12 @@ export default function Parametres() {
   const [boutique, setBoutique] = useState(null);
   const [nom, setNom] = useState("");
   const [message, setMessage] = useState("");
+  const [nomBoutique, setNomBoutique] = useState("");
+  const [descriptionBoutique, setDescriptionBoutique] = useState("");
+  const [aproposBoutique, setAproposBoutique] = useState("");
+  const [couleurAccent, setCouleurAccent] = useState("#e07a3f");
+  const [messageBoutique, setMessageBoutique] = useState("");
+  const [enregistrementBoutique, setEnregistrementBoutique] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -59,6 +65,11 @@ export default function Parametres() {
     });
     const data = await res.json();
     setBoutique(data.boutique);
+    setNomBoutique(data.boutique?.nom || "");
+    setDescriptionBoutique(data.boutique?.description || "");
+    setAproposBoutique(data.boutique?.apropos || "");
+    setCouleurAccent(data.boutique?.couleurAccent || "#e07a3f");
+    setMessageBoutique("");
     setChargement(false);
   }
 
@@ -92,6 +103,47 @@ export default function Parametres() {
     });
     if (res.ok) {
       setBoutique({ ...boutique, logoUrl: url });
+    }
+  }
+
+  async function enregistrerBanniere(url) {
+    const token = localStorage.getItem("token");
+    const res = await fetch("/api/boutiques/me", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ id: boutiqueId, bannerUrl: url }),
+    });
+    if (res.ok) {
+      setBoutique({ ...boutique, bannerUrl: url });
+    }
+  }
+
+  async function enregistrerBoutique(e) {
+    e.preventDefault();
+    setMessageBoutique("");
+    setEnregistrementBoutique(true);
+    const token = localStorage.getItem("token");
+
+    const res = await fetch("/api/boutiques/me", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({
+        id: boutiqueId,
+        nom: nomBoutique,
+        description: descriptionBoutique,
+        apropos: aproposBoutique,
+        couleurAccent,
+      }),
+    });
+    const data = await res.json();
+    setEnregistrementBoutique(false);
+
+    if (res.ok) {
+      setBoutique(data.boutique);
+      setBoutiques((liste) => liste.map((b) => (b.id === boutiqueId ? { ...b, nom: data.boutique.nom } : b)));
+      setMessageBoutique("Boutique mise à jour.");
+    } else {
+      setMessageBoutique(data.erreur || "Erreur lors de la mise à jour.");
     }
   }
 
@@ -165,6 +217,77 @@ export default function Parametres() {
           </section>
         )}
 
+        {/* Apparence de la boutique : nom, description, couleur */}
+        {boutique && (
+          <section className="mt-6 border border-line p-4">
+            <h2 className="font-display text-lg">Apparence de la boutique</h2>
+            <p className="mt-1 text-sm text-muted">
+              Ce que les clients voient sur votre page publique.
+            </p>
+
+            <form onSubmit={enregistrerBoutique} className="mt-4 flex flex-col gap-3">
+              <label className="flex flex-col gap-1 text-sm">
+                Nom de la boutique
+                <input
+                  required
+                  className="border border-line px-3 py-2"
+                  value={nomBoutique}
+                  onChange={(e) => setNomBoutique(e.target.value)}
+                />
+              </label>
+
+              <label className="flex flex-col gap-1 text-sm">
+                Description courte
+                <textarea
+                  rows={3}
+                  maxLength={300}
+                  placeholder="En quelques mots, présentez votre boutique..."
+                  className="border border-line px-3 py-2"
+                  value={descriptionBoutique}
+                  onChange={(e) => setDescriptionBoutique(e.target.value)}
+                />
+              </label>
+
+              <label className="flex flex-col gap-1 text-sm">
+                À propos (texte plus long, affiché sur votre page)
+                <textarea
+                  rows={6}
+                  maxLength={2000}
+                  placeholder="Racontez votre boutique, votre histoire, ce qui vous différencie..."
+                  className="border border-line px-3 py-2"
+                  value={aproposBoutique}
+                  onChange={(e) => setAproposBoutique(e.target.value)}
+                />
+                <span className="text-xs text-muted">{aproposBoutique.length}/2000</span>
+              </label>
+
+              <label className="flex flex-col gap-1 text-sm">
+                Couleur d&apos;accent
+                <div className="flex items-center gap-3">
+                  <input
+                    type="color"
+                    className="h-10 w-14 border border-line p-1"
+                    value={couleurAccent}
+                    onChange={(e) => setCouleurAccent(e.target.value)}
+                  />
+                  <span className="text-xs text-muted">
+                    Utilisée pour les boutons et badges de votre page
+                  </span>
+                </div>
+              </label>
+
+              {messageBoutique && <p className="text-sm">{messageBoutique}</p>}
+
+              <button
+                disabled={enregistrementBoutique}
+                className="mt-2 border border-ink bg-ink px-4 py-2 text-paper hover:bg-paper hover:text-ink transition-colors disabled:opacity-50"
+              >
+                {enregistrementBoutique ? "Enregistrement..." : "Enregistrer"}
+              </button>
+            </form>
+          </section>
+        )}
+
         {/* Photo de profil de la boutique */}
         {boutique && (
           <section className="mt-6 border border-line p-4">
@@ -182,6 +305,27 @@ export default function Parametres() {
             )}
             <div className="mt-3">
               <UploadMedia label="Changer la photo" onUploaded={enregistrerLogo} />
+            </div>
+          </section>
+        )}
+
+        {/* Bannière de la boutique */}
+        {boutique && (
+          <section className="mt-6 border border-line p-4">
+            <h2 className="font-display text-lg">Bannière de {boutique.nom}</h2>
+            <p className="mt-1 text-sm text-muted">
+              Grande image affichée en haut de votre page boutique.
+            </p>
+            {boutique.bannerUrl && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={boutique.bannerUrl}
+                alt=""
+                className="mt-3 h-24 w-full rounded object-cover"
+              />
+            )}
+            <div className="mt-3">
+              <UploadMedia label="Changer la bannière" onUploaded={enregistrerBanniere} />
             </div>
           </section>
         )}
