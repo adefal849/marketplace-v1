@@ -39,7 +39,7 @@ export async function POST(request) {
         Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
       },
       body: JSON.stringify({
-        model: "openai/gpt-oss-20b",
+        model: "openai/gpt-oss-120b",
         messages: [{ role: "system", content: SYSTEM_PROMPT }, ...conversation],
         max_completion_tokens: 400,
         temperature: 0.7,
