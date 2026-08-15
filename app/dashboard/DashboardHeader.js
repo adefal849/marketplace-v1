@@ -6,7 +6,6 @@ import Link from "next/link";
 import { Menu, Search, Bell, X } from "lucide-react";
 import ThemeToggle from "../ThemeToggle";
 import LogoDivineHarvest from "../LogoDivineHarvest";
-
 const SECTIONS = [
   { href: "/", label: "Accueil (voir les boutiques)" },
   { href: "/dashboard", cle: "dashboard", label: "Tableau de bord" },
@@ -23,9 +22,17 @@ export default function DashboardHeader({ actif, commandesEnAttente = 0, message
   const router = useRouter();
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [avatarOuvert, setAvatarOuvert] = useState(false);
+  const [recherche, setRecherche] = useState("");
   const avatarRef = useRef(null);
 
   const notifications = commandesEnAttente + messagesNonLus;
+
+  function lancerRecherche(e) {
+    e.preventDefault();
+    const q = recherche.trim();
+    if (!q) return;
+    router.push(`/dashboard?q=${encodeURIComponent(q)}`);
+  }
 
   useEffect(() => {
     function fermerSiExterieur(e) {
@@ -54,10 +61,18 @@ export default function DashboardHeader({ actif, commandesEnAttente = 0, message
           <span className="hidden sm:inline">Divine Harvest Store</span>
         </Link>
 
-        <div className="ml-2 flex flex-1 items-center gap-2 rounded-full bg-paper/10 px-3 py-1.5 text-sm text-paper/70">
-          <Search size={15} />
-          <span className="hidden sm:inline">Rechercher dans votre boutique</span>
-        </div>
+        <form
+          onSubmit={lancerRecherche}
+          className="ml-2 flex flex-1 items-center gap-2 rounded-full bg-paper/10 px-3 py-1.5 text-sm text-paper/70 focus-within:bg-paper/15"
+        >
+          <Search size={15} className="shrink-0" />
+          <input
+            value={recherche}
+            onChange={(e) => setRecherche(e.target.value)}
+            placeholder="Rechercher..."
+            className="w-full bg-transparent text-paper outline-none placeholder:text-paper/50"
+          />
+        </form>
 
         <Link href="/dashboard/commandes" aria-label="Notifications" className="relative">
           <Bell size={20} />
