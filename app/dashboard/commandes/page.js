@@ -12,6 +12,14 @@ const LABELS_STATUT = {
   ANNULEE: "Annulée",
 };
 
+const COULEUR_STATUT = {
+  EN_ATTENTE: "border-accent text-accent-dark bg-accent-light",
+  CONFIRMEE: "border-ia text-ia bg-ia-light",
+  EXPEDIEE: "border-ia text-ia bg-ia-light",
+  LIVREE: "border-leaf text-leaf bg-leaf-light",
+  ANNULEE: "border-line text-muted bg-line/30",
+};
+
 export default function Commandes() {
   const router = useRouter();
   const [chargement, setChargement] = useState(true);
@@ -77,7 +85,7 @@ export default function Commandes() {
         ) : (
           <ul className="mt-6 flex flex-col gap-4">
             {commandes.map((c) => (
-              <li key={c.id} className="border border-line p-4">
+              <li key={c.id} className="rounded-xl border border-line p-4 shadow-sm transition-shadow hover:shadow-md">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
                     <p className="font-display">{c.clientNom}</p>
@@ -92,7 +100,7 @@ export default function Commandes() {
                   <select
                     value={c.statut}
                     onChange={(e) => changerStatut(c.id, e.target.value)}
-                    className="border border-line px-2 py-1 text-sm"
+                    className={`rounded-full border px-3 py-1.5 text-xs font-medium ${COULEUR_STATUT[c.statut]}`}
                   >
                     {Object.entries(LABELS_STATUT).map(([valeur, libelle]) => (
                       <option key={valeur} value={valeur}>
@@ -104,7 +112,7 @@ export default function Commandes() {
 
                 <ul className="mt-3 border-t border-line pt-3 text-sm">
                   {c.lignes.map((l) => (
-                    <li key={l.id} className="flex justify-between">
+                    <li key={l.id} className="flex justify-between py-0.5">
                       <span>
                         {l.quantite} × {l.produit.nom}
                       </span>
@@ -113,7 +121,7 @@ export default function Commandes() {
                   ))}
                 </ul>
 
-                <p className="mt-3 text-right font-display">{c.total} FCFA</p>
+                <p className="mt-3 text-right font-display text-accent">{c.total} FCFA</p>
               </li>
             ))}
           </ul>

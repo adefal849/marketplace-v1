@@ -99,13 +99,13 @@ export default function Messages() {
                 key={c.id}
                 onClick={() => setConversationActive(c.id)}
                 className={`flex w-full flex-col items-start gap-1 border-b border-line px-4 py-3 text-left text-sm ${
-                  conversationActive === c.id ? "bg-line/20" : ""
+                  conversationActive === c.id ? "bg-accent-light" : ""
                 }`}
               >
                 <span className="flex w-full items-center justify-between">
                   <span className="font-medium">{c.clientNom}</span>
                   {c.nonLus > 0 && (
-                    <span className="rounded-full bg-ink px-2 py-0.5 text-[10px] text-paper">{c.nonLus}</span>
+                    <span className="rounded-full bg-accent px-2 py-0.5 text-[10px] text-paper">{c.nonLus}</span>
                   )}
                 </span>
                 {c.boutiqueNom && <span className="text-xs text-muted">{c.boutiqueNom}</span>}
@@ -130,8 +130,8 @@ export default function Messages() {
                     <p
                       className={
                         m.auteur === "VENDEUR"
-                          ? "max-w-[75%] border border-ink bg-ink px-3 py-2 text-sm text-paper"
-                          : "max-w-[75%] border border-line px-3 py-2 text-sm"
+                          ? "max-w-[75%] rounded-2xl rounded-br-sm bg-accent px-3 py-2 text-sm text-ink"
+                          : "max-w-[75%] rounded-2xl rounded-bl-sm border border-line px-3 py-2 text-sm"
                       }
                     >
                       {m.contenu}
