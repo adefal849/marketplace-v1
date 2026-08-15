@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Check, Store } from "lucide-react";
 import { useCart } from "../../CartContext";
 import { estVideo } from "../../media";
@@ -43,22 +44,20 @@ export default function BoutiqueClient({ boutique }) {
       <BackButton secours="/" texte="Toutes les boutiques" />
 
       {boutique.bannerUrl && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={boutique.bannerUrl}
-          alt=""
-          className="mt-4 h-40 w-full rounded object-cover md:h-56"
-        />
+        <div className="relative mt-4 h-40 w-full overflow-hidden rounded md:h-56">
+          <Image src={boutique.bannerUrl} alt="" fill sizes="100vw" className="object-cover" priority />
+        </div>
       )}
 
       {/* En-tête façon profil : photo (ou icône par défaut), nom, description */}
       <header className="flex items-start justify-between gap-4 border-b border-line pb-8 pt-6">
         <div className="flex items-center gap-4">
           {boutique.logoUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <Image
               src={boutique.logoUrl}
               alt={boutique.nom}
+              width={64}
+              height={64}
               className="h-16 w-16 shrink-0 rounded-full object-cover"
             />
           ) : (
@@ -127,12 +126,15 @@ export default function BoutiqueClient({ boutique }) {
                         controls
                       />
                     ) : (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={p.imageUrl}
-                        alt={p.nom}
-                        className="aspect-square w-full object-cover"
-                      />
+      <div className="relative aspect-square w-full">
+                        <Image
+                          src={p.imageUrl}
+                          alt={p.nom}
+                          fill
+                          sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
+                          className="object-cover"
+                        />
+                      </div>
                     )
                   ) : (
                     <div className="aspect-square w-full bg-line" />

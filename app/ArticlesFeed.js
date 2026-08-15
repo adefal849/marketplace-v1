@@ -3,6 +3,7 @@
 import { Suspense, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { CATEGORIES } from "./categories";
 import CategoryIcon from "./CategoryIcon";
 import { estVideo } from "./media";
@@ -66,8 +67,15 @@ function Feed({ produits }) {
                   estVideo(p.imageUrl) ? (
                     <video src={p.imageUrl} className="aspect-square w-full object-cover" muted playsInline />
                   ) : (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={p.imageUrl} alt={p.nom} className="aspect-square w-full object-cover" />
+                    <div className="relative aspect-square w-full">
+                      <Image
+                        src={p.imageUrl}
+                        alt={p.nom}
+                        fill
+                        sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
+                        className="object-cover"
+                      />
+                    </div>
                   )
                 ) : (
                   <div className="aspect-square w-full bg-line" />

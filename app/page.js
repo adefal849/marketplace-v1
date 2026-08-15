@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ShoppingBag, Store, ArrowRight, ArrowDown, Sparkles } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import TopNav from "./TopNav";
@@ -116,10 +117,11 @@ export default async function Accueil() {
                   style={b.couleurAccent ? { "--accent": b.couleurAccent } : undefined}
                 >
                   {b.logoUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
+                    <Image
                       src={b.logoUrl}
                       alt={b.nom}
+                      width={64}
+                      height={64}
                       className="h-16 w-16 rounded-full object-cover ring-2 ring-accent/30"
                     />
                   ) : (

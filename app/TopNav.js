@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ChevronDown, Search, X } from "lucide-react";
 import CartBadge from "./CartBadge";
 import LogoDivineHarvest from "./LogoDivineHarvest";
+import ThemeToggle from "./ThemeToggle";
 import { CATEGORIES } from "./categories";
 import CategoryIcon from "./CategoryIcon";
 
@@ -39,7 +40,7 @@ export default function TopNav() {
   }
 
   return (
-    <div className="sticky top-0 z-30 border-b border-line bg-paper">
+    <div className="sticky top-0 z-30 border-b border-line bg-paper text-ink dark:border-line-dark dark:bg-ink dark:text-paper">
       <div className="flex items-center justify-between gap-3 px-6 py-3 md:px-12">
         <Link href="/" className="flex shrink-0 items-center gap-1.5 font-display text-lg">
           <LogoDivineHarvest size={18} />
@@ -98,17 +99,20 @@ export default function TopNav() {
       )}
 
       {menuOuvert && (
-        <nav className="flex flex-col border-t border-line px-6 md:px-12">
+        <nav className="flex flex-col border-t border-line px-6 dark:border-line-dark md:px-12">
           {LIENS.map((l) => (
             <Link
               key={l.label}
               href={l.href}
               onClick={() => setMenuOuvert(false)}
-              className="border-b border-line py-3 text-sm last:border-b-0"
+              className="border-b border-line py-3 text-sm last:border-b-0 dark:border-line-dark"
             >
               {l.label}
             </Link>
           ))}
+          <div className="py-3">
+            <ThemeToggle />
+          </div>
         </nav>
       )}
     </div>
