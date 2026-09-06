@@ -1,6 +1,7 @@
 import { Fraunces, Inter, Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "./CartContext";
+import RegisterServiceWorker from "./RegisterServiceWorker";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -28,6 +29,16 @@ export const metadata = {
     template: "%s",
   },
   description: "Créez votre boutique en ligne en quelques minutes.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Divine Harvest",
+  },
+  icons: {
+    icon: [{ url: "/icon-192.png", sizes: "192x192", type: "image/png" }],
+    apple: [{ url: "/icon-192.png", sizes: "192x192", type: "image/png" }],
+  },
   openGraph: {
     title: "Divine Harvest Store",
     description: "Des vendeurs indépendants, un seul marché.",
@@ -37,11 +48,18 @@ export const metadata = {
   },
 };
 
+export const viewport = {
+  themeColor: "#2563eb",
+  width: "device-width",
+  initialScale: 1,
+};
+
 export default function RootLayout({ children }) {
   return (
     <html lang="fr" className={`${fraunces.variable} ${inter.variable} ${bricolage.variable}`}>
       <body>
         <CartProvider>{children}</CartProvider>
+        <RegisterServiceWorker />
       </body>
     </html>
   );

@@ -62,7 +62,7 @@ function Feed({ produits }) {
         <ul className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
           {filtres.map((p) => (
             <li key={p.id} className="overflow-hidden rounded-xl border border-line bg-paper transition-shadow hover:shadow-md">
-              <Link href={`/boutique/${p.boutique.slug}`}>
+              <Link href={`/produit/${p.id}`}>
                 {p.imageUrl ? (
                   estVideo(p.imageUrl) ? (
                     <video src={p.imageUrl} className="aspect-square w-full object-cover" muted playsInline />

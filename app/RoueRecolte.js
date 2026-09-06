@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Sparkles, ArrowRight } from "lucide-react";
 
-const COULEURS = ["#F5A623", "#FF6B45", "#C8447A", "#1F4B37"];
+const COULEURS = ["#2563EB", "#F59E0B", "#7C3AED", "#16A34A"];
 
 // Roue de découverte : tire une boutique au hasard parmi les boutiques
 // actives et y renvoie l'acheteur. Un vrai outil de découverte habillé en
@@ -43,7 +43,7 @@ export default function RoueRecolte({ boutiques }) {
     <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-center sm:gap-8">
       <div className="relative shrink-0">
         <div
-          className="roue h-36 w-36 rounded-full border-4 border-cream shadow-[6px_8px_0_0_#12301F] sm:h-40 sm:w-40"
+          className="roue h-36 w-36 rounded-full border-4 border-paper shadow-[6px_8px_0_0_#0F172A] sm:h-40 sm:w-40"
           style={{
             transform: `rotate(${angle}deg)`,
             background: `conic-gradient(${boutiques
@@ -54,20 +54,20 @@ export default function RoueRecolte({ boutiques }) {
           {secteurs.map((deg, i) => (
             <span
               key={i}
-              className="absolute left-1/2 top-1/2 h-0.5 w-16 origin-left bg-cream/40 sm:w-[4.5rem]"
+              className="absolute left-1/2 top-1/2 h-0.5 w-16 origin-left bg-paper/40 sm:w-[4.5rem]"
               style={{ transform: `rotate(${deg}deg)` }}
             />
           ))}
         </div>
         {/* Pointeur fixe */}
-        <div className="absolute -top-2 left-1/2 h-4 w-4 -translate-x-1/2 rotate-45 bg-cream shadow" />
+        <div className="absolute -top-2 left-1/2 h-4 w-4 -translate-x-1/2 rotate-45 bg-paper shadow" />
       </div>
 
       <div className="flex flex-col items-center gap-3 sm:items-start">
         <button
           onClick={tourner}
           disabled={enCours}
-          className="flex items-center gap-2 border-2 border-forest-deep bg-gold px-5 py-2.5 text-sm font-semibold text-forest-deep shadow-[4px_5px_0_0_#12301F] transition-transform hover:-translate-y-0.5 active:translate-y-0 active:shadow-none disabled:opacity-60"
+          className="flex items-center gap-2 border-2 border-ink bg-warning px-5 py-2.5 text-sm font-semibold text-ink shadow-[4px_5px_0_0_#0F172A] transition-transform hover:-translate-y-0.5 active:translate-y-0 active:shadow-none disabled:opacity-60"
         >
           <Sparkles size={16} />
           {enCours ? "Ça tourne..." : "Faire tourner la roue"}
@@ -75,14 +75,14 @@ export default function RoueRecolte({ boutiques }) {
 
         <div className="min-h-[3rem] text-center sm:text-left">
           {tirage ? (
-            <p className="animate-apparition text-sm text-cream/90">
+            <p className="animate-apparition text-sm text-paper/90">
               Vous êtes tombé sur{" "}
-              <Link href={`/boutique/${tirage.slug}`} className="inline-flex items-center gap-1 font-semibold text-gold underline">
+              <Link href={`/boutique/${tirage.slug}`} className="inline-flex items-center gap-1 font-semibold text-warning underline">
                 {tirage.nom} <ArrowRight size={13} />
               </Link>
             </p>
           ) : (
-            <p className="text-sm text-cream/70">Une boutique au hasard, à chaque tour.</p>
+            <p className="text-sm text-paper/70">Une boutique au hasard, à chaque tour.</p>
           )}
         </div>
       </div>

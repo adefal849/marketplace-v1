@@ -45,7 +45,7 @@ export async function PATCH(request) {
   if (nom !== undefined && !nom.trim()) {
     return NextResponse.json({ erreur: "Le nom ne peut pas être vide." }, { status: 400 });
   }
-  // Couleur hex simple, ex: #e07a3f ou #fff — évite d'enregistrer n'importe
+  // Couleur hex simple, ex: #2563eb ou #fff — évite d'enregistrer n'importe
   // quelle chaîne dans un champ qui finit injecté en style CSS.
   if (couleurAccent !== undefined && couleurAccent !== null && !/^#[0-9a-fA-F]{3,8}$/.test(couleurAccent)) {
     return NextResponse.json({ erreur: "Couleur invalide." }, { status: 400 });

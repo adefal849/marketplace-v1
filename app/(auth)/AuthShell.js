@@ -2,17 +2,17 @@ import BackButton from "../BackButton";
 import LogoDivineHarvest from "../LogoDivineHarvest";
 
 const FORMES = [
-  { top: "-6%", left: "-8%", size: 140, color: "#F5A623" },
-  { top: "70%", left: "80%", size: 110, color: "#C8447A" },
-  { top: "40%", left: "-10%", size: 80, color: "#FF6B45" },
+  { top: "-6%", left: "-8%", size: 140, color: "#2563EB" },
+  { top: "70%", left: "80%", size: 110, color: "#7C3AED" },
+  { top: "40%", left: "-10%", size: 80, color: "#16A34A" },
 ];
 
-// Habillage partagé par connexion / inscription / mots de passe : fond crème,
-// formes flottantes discrètes, carte "à jouer" centrée. Garde la logique de
-// chaque page intacte, ne touche qu'au décor autour du formulaire.
+// Habillage partagé par connexion / inscription / mots de passe : fond
+// canvas, formes flottantes discrètes, carte "à jouer" centrée. Garde la
+// logique de chaque page intacte, ne touche qu'au décor autour du formulaire.
 export default function AuthShell({ retourVers, retourTexte, eyebrow, titre, sousTitre, children }) {
   return (
-    <main className="relative min-h-screen overflow-hidden bg-cream dark:bg-forest-deep">
+    <main className="relative min-h-screen overflow-hidden bg-canvas dark:bg-ink">
       {FORMES.map((f, i) => (
         <div
           key={i}
@@ -27,14 +27,14 @@ export default function AuthShell({ retourVers, retourTexte, eyebrow, titre, sou
           <LogoDivineHarvest size={20} />
         </div>
 
-        <div className="carte-jeu mt-6 border-2 border-ink bg-paper p-6 shadow-[5px_6px_0_0_#12301F] dark:border-cream dark:bg-forest">
+        <div className="carte-jeu mt-6 border-2 border-ink bg-paper p-6 shadow-[5px_6px_0_0_#0F172A] dark:border-line-dark dark:bg-panel-dark">
           {eyebrow && (
-            <p className="font-body text-xs uppercase tracking-[0.2em] text-berry dark:text-gold">
+            <p className="font-body text-xs uppercase tracking-[0.2em] text-accent-dark dark:text-accent-light">
               {eyebrow}
             </p>
           )}
           <h1 className="mt-2 font-hero text-3xl font-extrabold leading-tight">{titre}</h1>
-          {sousTitre && <div className="mt-2 text-sm text-muted dark:text-cream/70">{sousTitre}</div>}
+          {sousTitre && <div className="mt-2 text-sm text-muted dark:text-paper/70">{sousTitre}</div>}
 
           {children}
         </div>

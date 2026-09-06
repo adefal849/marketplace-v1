@@ -1,7 +1,7 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import DashboardHeader from "./DashboardHeader";
 import { CATEGORIES } from "../categories";
 import { TrendingUp, Sparkles, X, Store, Bell, Palette, Plus } from "lucide-react";
@@ -10,13 +10,8 @@ import AssistantVendeur from "./AssistantVendeur";
 
 const CLE_BOUTIQUE_ACTIVE = "boutiqueActiveId";
 
-// useSearchParams() (pour le ?q= de la recherche du header) exige un
-// Suspense autour de la page en build Next.js — d'où ce petit composant
-// interne, le vrai contenu ne change pas.
-function DashboardInterieur() {
+export default function Dashboard() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const rechercheProduit = (searchParams.get("q") || "").trim().toLowerCase();
   const [chargementInitial, setChargementInitial] = useState(true);
   const [boutiques, setBoutiques] = useState([]);
   const [boutiqueActiveId, setBoutiqueActiveId] = useState(null);
@@ -235,11 +230,6 @@ function DashboardInterieur() {
   if (chargementInitial) {
     return <main className="min-h-screen px-6 py-12">Chargement...</main>;
   }
-
-  const produitsAffiches =
-    boutique && rechercheProduit
-      ? boutique.produits.filter((p) => p.nom.toLowerCase().includes(rechercheProduit))
-      : boutique?.produits || [];
 
   return (
     <main className="min-h-screen">
@@ -560,15 +550,9 @@ function DashboardInterieur() {
 
             {/* Liste des produits */}
             <section className="mt-8">
-              <h2 className="font-display text-xl">
-                Vos produits ({produitsAffiches.length}
-                {rechercheProduit ? ` / ${boutique.produits.length}` : ""})
-              </h2>
-              {rechercheProduit && produitsAffiches.length === 0 && (
-                <p className="mt-3 text-sm text-muted">Aucun produit ne correspond à "{rechercheProduit}".</p>
-              )}
+              <h2 className="font-display text-xl">Vos produits ({boutique.produits.length})</h2>
               <ul className="mt-4">
-                {produitsAffiches.map((p) => (
+                {boutique.produits.map((p) => (
                   <li key={p.id} className="border-b border-line py-3 text-sm">
                     {p.nom} — {p.prix} FCFA — stock : {p.stock}
                   </li>
@@ -579,13 +563,5 @@ function DashboardInterieur() {
         )}
       </div>
     </main>
-  );
-}
-
-export default function Dashboard() {
-  return (
-    <Suspense fallback={<main className="min-h-screen px-6 py-12">Chargement...</main>}>
-      <DashboardInterieur />
-    </Suspense>
   );
 }

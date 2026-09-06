@@ -117,16 +117,18 @@ export default function BoutiqueClient({ boutique }) {
 
                   {p.imageUrl ? (
                     estVideo(p.imageUrl) ? (
-                      <video
-                        src={p.imageUrl}
-                        className="aspect-square w-full object-cover"
-                        muted
-                        loop
-                        playsInline
-                        controls
-                      />
+                      <Link href={`/produit/${p.id}`}>
+                        <video
+                          src={p.imageUrl}
+                          className="aspect-square w-full object-cover"
+                          muted
+                          loop
+                          playsInline
+                          controls
+                        />
+                      </Link>
                     ) : (
-      <div className="relative aspect-square w-full">
+                      <Link href={`/produit/${p.id}`} className="relative block aspect-square w-full">
                         <Image
                           src={p.imageUrl}
                           alt={p.nom}
@@ -134,13 +136,15 @@ export default function BoutiqueClient({ boutique }) {
                           sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
                           className="object-cover"
                         />
-                      </div>
+                      </Link>
                     )
                   ) : (
-                    <div className="aspect-square w-full bg-line" />
+                    <Link href={`/produit/${p.id}`} className="block aspect-square w-full bg-line" />
                   )}
-                  <h3 className="mt-3 text-sm">{p.nom}</h3>
-                  <p className="mt-1 font-display">{p.prix} FCFA</p>
+                  <Link href={`/produit/${p.id}`}>
+                    <h3 className="mt-3 text-sm hover:underline">{p.nom}</h3>
+                    <p className="mt-1 font-display">{p.prix} FCFA</p>
+                  </Link>
                   <button
                     onClick={() => handleAjouter(p)}
                     disabled={p.stock <= 0}

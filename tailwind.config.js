@@ -7,21 +7,28 @@ module.exports = {
   ],
   theme: {
     extend: {
-      // Palette élargie : noir/blanc pour la structure, mais couleur
-      // partout où ça donne de la vie — CTA, badges, IA, succès.
+      // Palette Divine Harvest (v2 — alignée sur le sommaire "Dépasser
+      // Shopify") : fond gris-bleu clair, cartes blanches, bleu comme
+      // couleur de marque. IA reste violette (différenciateur produit).
       colors: {
+        canvas: "#f8fafc",
         paper: "#ffffff",
-        ink: "#0a0a0a",
-        line: "#e5e5e5",
-        "line-dark": "#262626",
-        muted: "#737373",
-        accent: "#d97706",
-        "accent-dark": "#92400e",
-        "accent-light": "#fef3c7",
-        leaf: "#15803d",
+        ink: "#0f172a",
+        line: "#e2e8f0",
+        "line-dark": "#334155",
+        muted: "#64748b",
+        accent: "#2563eb",
+        "accent-dark": "#1d4ed8",
+        "accent-light": "#dbeafe",
+        leaf: "#16a34a",
         "leaf-light": "#dcfce7",
+        warning: "#f59e0b",
+        "warning-light": "#fef3c7",
+        danger: "#dc2626",
+        "danger-light": "#fee2e2",
         ia: "#7c3aed",
         "ia-light": "#ede9fe",
+        "panel-dark": "#1e293b",
       },
       fontFamily: {
         display: ["var(--font-display)", "sans-serif"],

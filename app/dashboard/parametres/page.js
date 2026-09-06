@@ -19,7 +19,7 @@ export default function Parametres() {
   const [nomBoutique, setNomBoutique] = useState("");
   const [descriptionBoutique, setDescriptionBoutique] = useState("");
   const [aproposBoutique, setAproposBoutique] = useState("");
-  const [couleurAccent, setCouleurAccent] = useState("#e07a3f");
+  const [couleurAccent, setCouleurAccent] = useState("#2563eb");
   const [messageBoutique, setMessageBoutique] = useState("");
   const [enregistrementBoutique, setEnregistrementBoutique] = useState(false);
 
@@ -68,7 +68,7 @@ export default function Parametres() {
     setNomBoutique(data.boutique?.nom || "");
     setDescriptionBoutique(data.boutique?.description || "");
     setAproposBoutique(data.boutique?.apropos || "");
-    setCouleurAccent(data.boutique?.couleurAccent || "#e07a3f");
+    setCouleurAccent(data.boutique?.couleurAccent || "#2563eb");
     setMessageBoutique("");
     setChargement(false);
   }
