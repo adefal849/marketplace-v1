@@ -41,7 +41,7 @@ export default function MotDePasseOublie() {
             <input
               required
               type="email"
-              className="border border-line px-3 py-2"
+              className="border border-line bg-paper px-3 py-2 text-ink placeholder:text-muted dark:border-line-dark dark:bg-panel-dark dark:text-paper"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />

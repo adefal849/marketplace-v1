@@ -76,7 +76,7 @@ export default function AssistantChat({ slug, boutiqueNom, questionExterne }) {
   return (
     <div className="fixed bottom-4 right-4 z-20">
       {ouvert && (
-        <div className="mb-3 flex h-96 w-72 flex-col border border-line bg-paper shadow-lg sm:w-80">
+        <div className="mb-3 flex h-96 w-72 flex-col border border-line bg-paper shadow-lg dark:border-line-dark dark:bg-panel-dark sm:w-80">
           <div className="flex items-center justify-between border-b border-line px-4 py-3">
             <p className="text-sm font-medium">Assistant boutique</p>
             <button onClick={() => setOuvert(false)} aria-label="Fermer">
@@ -107,7 +107,7 @@ export default function AssistantChat({ slug, boutiqueNom, questionExterne }) {
               value={saisie}
               onChange={(e) => setSaisie(e.target.value)}
               placeholder="Posez votre question..."
-              className="flex-1 px-3 py-2 text-sm outline-none"
+              className="flex-1 bg-paper px-3 py-2 text-sm text-ink outline-none dark:bg-panel-dark dark:text-paper"
             />
             <button
               disabled={envoi}

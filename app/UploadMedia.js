@@ -55,7 +55,7 @@ export default function UploadMedia({ onUploaded, label = "Photo ou vidéo du pr
         accept="image/*,video/*"
         onChange={gererFichier}
         disabled={enCours}
-        className="border border-line px-3 py-2 text-xs"
+        className="border border-line bg-paper px-3 py-2 text-ink placeholder:text-muted dark:border-line-dark dark:bg-panel-dark dark:text-paper text-xs"
       />
       {enCours && <span className="text-xs text-muted">Envoi en cours...</span>}
       {erreur && <span className="text-xs">{erreur}</span>}

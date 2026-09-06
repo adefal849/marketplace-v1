@@ -54,7 +54,7 @@ function FormulaireReinitialisation() {
             required
             minLength={6}
             type={motDePasseVisible ? "text" : "password"}
-            className="w-full px-3 py-2 outline-none"
+            className="w-full bg-paper px-3 py-2 text-ink outline-none dark:bg-panel-dark dark:text-paper"
             value={motDePasse}
             onChange={(e) => setMotDePasse(e.target.value)}
           />

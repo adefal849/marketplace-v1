@@ -274,7 +274,7 @@ export default function Dashboard() {
                 Nom de la boutique
                 <input
                   required
-                  className="border border-line px-3 py-2"
+                  className="border border-line bg-paper px-3 py-2 text-ink placeholder:text-muted dark:border-line-dark dark:bg-panel-dark dark:text-paper"
                   value={formBoutique.nom}
                   onChange={(e) => setFormBoutique({ ...formBoutique, nom: e.target.value })}
                 />
@@ -282,7 +282,7 @@ export default function Dashboard() {
               <label className="flex flex-col gap-1 text-sm">
                 Description
                 <textarea
-                  className="border border-line px-3 py-2"
+                  className="border border-line bg-paper px-3 py-2 text-ink placeholder:text-muted dark:border-line-dark dark:bg-panel-dark dark:text-paper"
                   value={formBoutique.description}
                   onChange={(e) => setFormBoutique({ ...formBoutique, description: e.target.value })}
                 />
@@ -307,7 +307,7 @@ export default function Dashboard() {
                 Nom de la boutique
                 <input
                   required
-                  className="border border-line px-3 py-2"
+                  className="border border-line bg-paper px-3 py-2 text-ink placeholder:text-muted dark:border-line-dark dark:bg-panel-dark dark:text-paper"
                   value={formBoutique.nom}
                   onChange={(e) => setFormBoutique({ ...formBoutique, nom: e.target.value })}
                 />
@@ -316,7 +316,7 @@ export default function Dashboard() {
               <label className="flex flex-col gap-1 text-sm">
                 Description
                 <textarea
-                  className="border border-line px-3 py-2"
+                  className="border border-line bg-paper px-3 py-2 text-ink placeholder:text-muted dark:border-line-dark dark:bg-panel-dark dark:text-paper"
                   value={formBoutique.description}
                   onChange={(e) => setFormBoutique({ ...formBoutique, description: e.target.value })}
                 />
@@ -462,7 +462,7 @@ export default function Dashboard() {
                         value={descriptionIa}
                         onChange={(e) => setDescriptionIa(e.target.value)}
                         placeholder="Ex: sac à main en cuir marron, fait main, pour femme"
-                        className="border border-line px-3 py-2 text-sm"
+                        className="border border-line bg-paper px-3 py-2 text-ink placeholder:text-muted dark:border-line-dark dark:bg-panel-dark dark:text-paper text-sm"
                         rows={3}
                       />
                       {erreurIa && <p className="text-sm">{erreurIa}</p>}
@@ -489,7 +489,7 @@ export default function Dashboard() {
                     Nom du produit
                     <input
                       required
-                      className="border border-line px-3 py-2"
+                      className="border border-line bg-paper px-3 py-2 text-ink placeholder:text-muted dark:border-line-dark dark:bg-panel-dark dark:text-paper"
                       value={formProduit.nom}
                       onChange={(e) => setFormProduit({ ...formProduit, nom: e.target.value })}
                     />
@@ -500,7 +500,7 @@ export default function Dashboard() {
                     <input
                       required
                       type="number"
-                      className="border border-line px-3 py-2"
+                      className="border border-line bg-paper px-3 py-2 text-ink placeholder:text-muted dark:border-line-dark dark:bg-panel-dark dark:text-paper"
                       value={formProduit.prix}
                       onChange={(e) => setFormProduit({ ...formProduit, prix: e.target.value })}
                     />
@@ -509,7 +509,7 @@ export default function Dashboard() {
                   <label className="flex flex-col gap-1 text-sm">
                     Catégorie
                     <select
-                      className="border border-line px-3 py-2"
+                      className="border border-line bg-paper px-3 py-2 text-ink placeholder:text-muted dark:border-line-dark dark:bg-panel-dark dark:text-paper"
                       value={formProduit.categorie}
                       onChange={(e) => setFormProduit({ ...formProduit, categorie: e.target.value })}
                     >
@@ -526,7 +526,7 @@ export default function Dashboard() {
                     Stock
                     <input
                       type="number"
-                      className="border border-line px-3 py-2"
+                      className="border border-line bg-paper px-3 py-2 text-ink placeholder:text-muted dark:border-line-dark dark:bg-panel-dark dark:text-paper"
                       value={formProduit.stock}
                       onChange={(e) => setFormProduit({ ...formProduit, stock: e.target.value })}
                     />

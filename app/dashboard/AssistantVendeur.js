@@ -104,7 +104,7 @@ export default function AssistantVendeur({ onFicheDemandee }) {
           value={saisie}
           onChange={(e) => setSaisie(e.target.value)}
           placeholder="Posez votre question..."
-          className="flex-1 border border-line bg-paper px-3 py-2 text-sm outline-none focus:border-ia"
+          className="flex-1 border border-line bg-paper px-3 py-2 text-sm text-ink outline-none focus:border-ia dark:border-line-dark dark:bg-panel-dark dark:text-paper"
         />
         <button
           disabled={envoi || !saisie.trim()}

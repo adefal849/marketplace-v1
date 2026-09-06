@@ -175,7 +175,7 @@ export default function Panier() {
                           onChange={(e) =>
                             changerQuantite(a.produitId, Number(e.target.value))
                           }
-                          className="w-14 border border-line px-2 py-1 text-center"
+                          className="w-14 border border-line bg-paper px-2 py-1 text-center text-ink dark:border-line-dark dark:bg-panel-dark dark:text-paper"
                         />
                         <button
                           onClick={() => retirer(a.produitId)}
@@ -204,7 +204,7 @@ export default function Panier() {
               Nom complet
               <input
                 required
-                className="border border-line px-3 py-2"
+                className="border border-line bg-paper px-3 py-2 text-ink placeholder:text-muted dark:border-line-dark dark:bg-panel-dark dark:text-paper"
                 value={form.clientNom}
                 onChange={(e) => setForm({ ...form, clientNom: e.target.value })}
               />
@@ -214,7 +214,7 @@ export default function Panier() {
               <input
                 required
                 type="email"
-                className="border border-line px-3 py-2"
+                className="border border-line bg-paper px-3 py-2 text-ink placeholder:text-muted dark:border-line-dark dark:bg-panel-dark dark:text-paper"
                 value={form.clientEmail}
                 onChange={(e) => setForm({ ...form, clientEmail: e.target.value })}
               />
@@ -222,7 +222,7 @@ export default function Panier() {
             <label className="flex flex-col gap-1 text-sm">
               Téléphone
               <input
-                className="border border-line px-3 py-2"
+                className="border border-line bg-paper px-3 py-2 text-ink placeholder:text-muted dark:border-line-dark dark:bg-panel-dark dark:text-paper"
                 value={form.clientTel}
                 onChange={(e) => setForm({ ...form, clientTel: e.target.value })}
               />

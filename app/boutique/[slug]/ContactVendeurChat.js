@@ -98,7 +98,7 @@ export default function ContactVendeurChat({ slug, boutiqueNom }) {
   return (
     <div className="fixed bottom-4 left-4 z-20">
       {ouvert && (
-        <div className="mb-3 flex h-96 w-72 flex-col border border-line bg-paper shadow-lg sm:w-80">
+        <div className="mb-3 flex h-96 w-72 flex-col border border-line bg-paper shadow-lg dark:border-line-dark dark:bg-panel-dark sm:w-80">
           <div className="flex items-center justify-between border-b border-line px-4 py-3">
             <p className="text-sm font-medium">Discuter avec {boutiqueNom}</p>
             <button onClick={() => setOuvert(false)} aria-label="Fermer">
@@ -116,14 +116,14 @@ export default function ContactVendeurChat({ slug, boutiqueNom }) {
                   placeholder="Votre nom"
                   value={profil.nom}
                   onChange={(e) => setProfil({ ...profil, nom: e.target.value })}
-                  className="border border-line px-3 py-2"
+                  className="border border-line bg-paper px-3 py-2 text-ink placeholder:text-muted dark:border-line-dark dark:bg-panel-dark dark:text-paper"
                 />
                 <input
                   placeholder="Votre email"
                   type="email"
                   value={profil.email}
                   onChange={(e) => setProfil({ ...profil, email: e.target.value })}
-                  className="border border-line px-3 py-2"
+                  className="border border-line bg-paper px-3 py-2 text-ink placeholder:text-muted dark:border-line-dark dark:bg-panel-dark dark:text-paper"
                 />
               </div>
             </div>
@@ -151,7 +151,7 @@ export default function ContactVendeurChat({ slug, boutiqueNom }) {
               value={saisie}
               onChange={(e) => setSaisie(e.target.value)}
               placeholder={conversationId ? "Votre message..." : "Votre question..."}
-              className="flex-1 px-3 py-2 text-sm outline-none"
+              className="flex-1 bg-paper px-3 py-2 text-sm text-ink outline-none dark:bg-panel-dark dark:text-paper"
             />
             <button disabled={envoi} className="border-l border-line px-4 text-sm disabled:opacity-40">
               Envoyer

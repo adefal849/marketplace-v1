@@ -48,7 +48,7 @@ export default function Decouverte() {
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Rechercher un produit ou une boutique..."
-          className="w-full border border-ink px-4 py-3 text-sm"
+          className="w-full border border-ink bg-paper px-4 py-3 text-sm text-ink outline-none dark:border-line-dark dark:bg-panel-dark dark:text-paper"
         />
       </div>
 

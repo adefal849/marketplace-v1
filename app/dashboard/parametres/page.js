@@ -183,7 +183,7 @@ export default function Parametres() {
               Nom
               <input
                 required
-                className="border border-line px-3 py-2"
+                className="border border-line bg-paper px-3 py-2 text-ink placeholder:text-muted dark:border-line-dark dark:bg-panel-dark dark:text-paper"
                 value={nom}
                 onChange={(e) => setNom(e.target.value)}
               />
@@ -230,7 +230,7 @@ export default function Parametres() {
                 Nom de la boutique
                 <input
                   required
-                  className="border border-line px-3 py-2"
+                  className="border border-line bg-paper px-3 py-2 text-ink placeholder:text-muted dark:border-line-dark dark:bg-panel-dark dark:text-paper"
                   value={nomBoutique}
                   onChange={(e) => setNomBoutique(e.target.value)}
                 />
@@ -242,7 +242,7 @@ export default function Parametres() {
                   rows={3}
                   maxLength={300}
                   placeholder="En quelques mots, présentez votre boutique..."
-                  className="border border-line px-3 py-2"
+                  className="border border-line bg-paper px-3 py-2 text-ink placeholder:text-muted dark:border-line-dark dark:bg-panel-dark dark:text-paper"
                   value={descriptionBoutique}
                   onChange={(e) => setDescriptionBoutique(e.target.value)}
                 />
@@ -254,7 +254,7 @@ export default function Parametres() {
                   rows={6}
                   maxLength={2000}
                   placeholder="Racontez votre boutique, votre histoire, ce qui vous différencie..."
-                  className="border border-line px-3 py-2"
+                  className="border border-line bg-paper px-3 py-2 text-ink placeholder:text-muted dark:border-line-dark dark:bg-panel-dark dark:text-paper"
                   value={aproposBoutique}
                   onChange={(e) => setAproposBoutique(e.target.value)}
                 />
