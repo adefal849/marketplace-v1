@@ -2,8 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useCart } from "../CartContext";
 import BackButton from "../BackButton";
+
+// Leaflet a besoin de `window` : chargé uniquement côté navigateur.
+const CarteSelecteur = dynamic(() => import("../CarteSelecteur"), { ssr: false });
 
 export default function Panier() {
   const { panier, retirer, changerQuantite, vider, total } = useCart();
@@ -11,7 +15,9 @@ export default function Panier() {
     clientNom: "",
     clientEmail: "",
     clientTel: "",
+    adresseLivraison: "",
   });
+  const [positionLivraison, setPositionLivraison] = useState({ latitude: null, longitude: null });
   const [envoi, setEnvoi] = useState(false);
   const [erreur, setErreur] = useState("");
   const [confirmation, setConfirmation] = useState(null);
@@ -90,6 +96,8 @@ export default function Panier() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
+          latitudeLivraison: positionLivraison.latitude,
+          longitudeLivraison: positionLivraison.longitude,
           articles: panier.map((a) => ({
             produitId: a.produitId,
             quantite: a.quantite,
@@ -225,6 +233,30 @@ export default function Panier() {
                 className="border border-line bg-paper px-3 py-2 text-ink placeholder:text-muted dark:border-line-dark dark:bg-panel-dark dark:text-paper"
                 value={form.clientTel}
                 onChange={(e) => setForm({ ...form, clientTel: e.target.value })}
+              />
+            </label>
+
+            <label className="flex flex-col gap-1 text-sm">
+              Lieu de livraison
+              <span className="text-xs text-muted">
+                Pointez votre position sur la carte — utile même sans adresse postale précise.
+              </span>
+              <div className="mt-1">
+                <CarteSelecteur
+                  latitude={positionLivraison.latitude}
+                  longitude={positionLivraison.longitude}
+                  onChange={(lat, lng) => setPositionLivraison({ latitude: lat, longitude: lng })}
+                />
+              </div>
+            </label>
+
+            <label className="flex flex-col gap-1 text-sm">
+              Repère pour le livreur (quartier, couleur du portail...)
+              <input
+                placeholder="Ex : Immeuble bleu à côté de la pharmacie"
+                className="border border-line bg-paper px-3 py-2 text-ink placeholder:text-muted dark:border-line-dark dark:bg-panel-dark dark:text-paper"
+                value={form.adresseLivraison}
+                onChange={(e) => setForm({ ...form, adresseLivraison: e.target.value })}
               />
             </label>
 

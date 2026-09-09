@@ -143,6 +143,19 @@ export default function Commandes() {
                       {c.clientEmail}
                       {c.clientTel ? ` — ${c.clientTel}` : ""}
                     </p>
+                    {c.adresseLivraison && (
+                      <p className="mt-1 text-xs text-muted">Repère : {c.adresseLivraison}</p>
+                    )}
+                    {c.latitudeLivraison != null && c.longitudeLivraison != null && (
+                      <a
+                        href={`https://www.openstreetmap.org/?mlat=${c.latitudeLivraison}&mlon=${c.longitudeLivraison}#map=16/${c.latitudeLivraison}/${c.longitudeLivraison}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-1 inline-block text-xs underline text-accent"
+                      >
+                        Voir le lieu de livraison sur la carte
+                      </a>
+                    )}
                   </div>
                   <select
                     value={c.statut}

@@ -58,7 +58,7 @@ export async function POST(request) {
 export async function GET() {
   const boutiques = await prisma.boutique.findMany({
     where: { actif: true },
-    select: { id: true, nom: true, slug: true, description: true, logoUrl: true },
+    select: { id: true, nom: true, slug: true, description: true, logoUrl: true, latitude: true, longitude: true },
   });
   return NextResponse.json({ boutiques });
 }

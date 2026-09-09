@@ -7,7 +7,15 @@ import { getUserFromRequest } from "@/lib/auth";
 // une Commande distincte par boutique (le modèle Commande n'a qu'une
 // seule boutiqueId), avec vérification + décrément atomique du stock.
 export async function POST(request) {
-  const { clientNom, clientEmail, clientTel, articles } = await request.json();
+  const {
+    clientNom,
+    clientEmail,
+    clientTel,
+    adresseLivraison,
+    latitudeLivraison,
+    longitudeLivraison,
+    articles,
+  } = await request.json();
 
   if (
     !clientNom ||
@@ -94,6 +102,9 @@ export async function POST(request) {
             clientNom,
             clientEmail,
             clientTel,
+            adresseLivraison: adresseLivraison || null,
+            latitudeLivraison: typeof latitudeLivraison === "number" ? latitudeLivraison : null,
+            longitudeLivraison: typeof longitudeLivraison === "number" ? longitudeLivraison : null,
             total,
             boutiqueId,
             lignes: {

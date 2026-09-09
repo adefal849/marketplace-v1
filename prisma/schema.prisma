@@ -88,6 +88,8 @@ model Boutique {
   logoUrl       String?
   bannerUrl     String?
   couleurAccent String?        // couleur d'accent hex (ex: "#e07a3f"), utilisée sur la page publique
+  latitude      Float?         // position de la boutique, choisie sur la carte (Leaflet/OSM) côté dashboard
+  longitude     Float?         // sert au calcul de distance "à proximité" et au tri sur l'accueil
   actif         Boolean        @default(true) // permet à l'admin de suspendre
   vendeur       User           @relation(fields: [vendeurId], references: [id])
   vendeurId     String
@@ -122,6 +124,9 @@ model Commande {
   clientNom     String
   clientEmail   String
   clientTel     String?
+  adresseLivraison    String?  // description libre du lieu (repère, quartier...) — souvent plus utile qu'un point GPS seul
+  latitudeLivraison   Float?   // point choisi sur la carte par le client au moment de la commande
+  longitudeLivraison  Float?
   statut        StatutCommande  @default(EN_ATTENTE)
   total         Int
   boutique      Boutique        @relation(fields: [boutiqueId], references: [id])

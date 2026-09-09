@@ -6,6 +6,8 @@ import TopNav from "./TopNav";
 import ArticlesFeed from "./ArticlesFeed";
 import Footer from "./Footer";
 import LogoFindYourShop from "./LogoFindYourShop";
+import DistanceBoutique from "./DistanceBoutique";
+import Proximite from "./Proximite";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +21,7 @@ export default async function Accueil() {
     }),
     prisma.boutique.findMany({
       where: { actif: true },
-      select: { nom: true, slug: true, description: true, logoUrl: true, couleurAccent: true },
+      select: { nom: true, slug: true, description: true, logoUrl: true, couleurAccent: true, latitude: true, longitude: true },
       orderBy: { createdAt: "desc" },
     }),
   ]);
@@ -27,6 +29,7 @@ export default async function Accueil() {
   return (
     <main className="min-h-screen">
       <TopNav />
+      <Proximite />
 
       {/* Hero coloré, percutant : explique le site en une phrase et pousse
           vers acheter / vendre / se connecter. Reste au-dessus des
@@ -131,6 +134,7 @@ export default async function Accueil() {
                   )}
                   <h3 className="font-display text-lg group-hover:underline">{b.nom}</h3>
                   {b.description && <p className="line-clamp-2 text-sm text-muted">{b.description}</p>}
+                  <DistanceBoutique latitude={b.latitude} longitude={b.longitude} />
                 </Link>
               </li>
             ))}

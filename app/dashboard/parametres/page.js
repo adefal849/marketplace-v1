@@ -2,8 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import DashboardHeader from "../DashboardHeader";
 import UploadMedia from "../../UploadMedia";
+
+// Leaflet a besoin de `window` : chargé uniquement côté navigateur.
+const CarteSelecteur = dynamic(() => import("../../CarteSelecteur"), { ssr: false });
 
 const CLE_BOUTIQUE_ACTIVE = "boutiqueActiveId";
 
@@ -20,6 +24,8 @@ export default function Parametres() {
   const [descriptionBoutique, setDescriptionBoutique] = useState("");
   const [aproposBoutique, setAproposBoutique] = useState("");
   const [couleurAccent, setCouleurAccent] = useState("#2563eb");
+  const [latitudeBoutique, setLatitudeBoutique] = useState(null);
+  const [longitudeBoutique, setLongitudeBoutique] = useState(null);
   const [messageBoutique, setMessageBoutique] = useState("");
   const [enregistrementBoutique, setEnregistrementBoutique] = useState(false);
 
@@ -69,6 +75,8 @@ export default function Parametres() {
     setDescriptionBoutique(data.boutique?.description || "");
     setAproposBoutique(data.boutique?.apropos || "");
     setCouleurAccent(data.boutique?.couleurAccent || "#2563eb");
+    setLatitudeBoutique(data.boutique?.latitude ?? null);
+    setLongitudeBoutique(data.boutique?.longitude ?? null);
     setMessageBoutique("");
     setChargement(false);
   }
@@ -133,6 +141,8 @@ export default function Parametres() {
         description: descriptionBoutique,
         apropos: aproposBoutique,
         couleurAccent,
+        latitude: latitudeBoutique,
+        longitude: longitudeBoutique,
       }),
     });
     const data = await res.json();
@@ -273,6 +283,23 @@ export default function Parametres() {
                   <span className="text-xs text-muted">
                     Utilisée pour les boutons et badges de votre page
                   </span>
+                </div>
+              </label>
+
+              <label className="flex flex-col gap-1 text-sm">
+                Position de la boutique
+                <span className="text-xs text-muted">
+                  Utilisée pour la distance affichée aux clients et la livraison.
+                </span>
+                <div className="mt-1">
+                  <CarteSelecteur
+                    latitude={latitudeBoutique}
+                    longitude={longitudeBoutique}
+                    onChange={(lat, lng) => {
+                      setLatitudeBoutique(lat);
+                      setLongitudeBoutique(lng);
+                    }}
+                  />
                 </div>
               </label>
 
