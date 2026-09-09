@@ -1,6 +1,6 @@
 {
-  "name": "Divine Harvest Store",
-  "short_name": "Divine Harvest",
+  "name": "Find Your Shop",
+  "short_name": "FindShop",
   "description": "Des vendeurs indépendants, un seul marché. Achetez, discutez en direct, ou ouvrez votre boutique.",
   "start_url": "/",
   "scope": "/",

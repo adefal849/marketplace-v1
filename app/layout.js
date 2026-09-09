@@ -25,7 +25,7 @@ const bricolage = Bricolage_Grotesque({
 export const metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://marketplace-v1-ruddy.vercel.app"),
   title: {
-    default: "Divine Harvest Store — Vendez en ligne, simplement",
+    default: "Find Your Shop — Vendez en ligne, simplement",
     template: "%s",
   },
   description: "Créez votre boutique en ligne en quelques minutes.",
@@ -33,16 +33,16 @@ export const metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Divine Harvest",
+    title: "Find Your Shop",
   },
   icons: {
     icon: [{ url: "/icon-192.png", sizes: "192x192", type: "image/png" }],
     apple: [{ url: "/icon-192.png", sizes: "192x192", type: "image/png" }],
   },
   openGraph: {
-    title: "Divine Harvest Store",
+    title: "Find Your Shop",
     description: "Des vendeurs indépendants, un seul marché.",
-    siteName: "Divine Harvest Store",
+    siteName: "Find Your Shop",
     locale: "fr_FR",
     type: "website",
   },

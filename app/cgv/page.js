@@ -1,7 +1,7 @@
 import TopNav from "../TopNav";
 import Footer from "../Footer";
 
-export const metadata = { title: "Conditions générales de vente — Divine Harvest Store" };
+export const metadata = { title: "Conditions générales de vente — Find Your Shop" };
 
 export default function CGV() {
   return (
@@ -20,9 +20,9 @@ export default function CGV() {
           <div>
             <h2 className="font-display text-lg text-ink dark:text-paper">1. Rôle de la marketplace</h2>
             <p className="mt-2">
-              Divine Harvest Store héberge des boutiques tenues par des
+              Find Your Shop héberge des boutiques tenues par des
               vendeurs indépendants. La vente se fait directement entre
-              l'acheteur et le vendeur ; Divine Harvest Store n'est pas
+              l'acheteur et le vendeur ; Find Your Shop n'est pas
               partie au contrat de vente.
             </p>
           </div>

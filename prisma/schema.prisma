@@ -15,6 +15,13 @@ enum Role {
   ADMIN
 }
 
+enum StatutAbonnement {
+  EN_ATTENTE
+  ACTIF
+  ANNULE
+  EXPIRE
+}
+
 enum StatutCommande {
   EN_ATTENTE
   CONFIRMEE
@@ -33,8 +40,43 @@ model User {
   resetTokenExpire DateTime?
   cguAccepteesLe   DateTime? // horodatage de l'acceptation des CGU à l'inscription
   role        Role      @default(VENDEUR)
-  boutiques   Boutique[] // jusqu'à 4 par vendeur normal, illimité pour un ADMIN (voir /api/boutiques)
+  boutiques   Boutique[] // limite selon le plan actif (voir lib/plans.js), illimité pour un ADMIN
+  abonnements Abonnement[]
   createdAt   DateTime  @default(now())
+}
+
+// Catalogue des plans (voir lib/plans.js pour les valeurs de référence).
+// Une ligne est créée/mise à jour ici au moment du premier achat d'un plan
+// (upsert dans /api/abonnement), donc pas besoin de seed manuel.
+model Plan {
+  id            String       @id @default(cuid())
+  code          String       @unique // "GRATUIT" | "PRO" | "BUSINESS"
+  nom           String
+  prix          Int          // FCFA / mois, 0 pour le plan gratuit
+  maxBoutiques  Int?         // null = illimité
+  maxProduits   Int?         // par boutique, null = illimité
+  assistantIA   Boolean      @default(false)
+  statsAvancees Boolean      @default(false)
+  badgePremium  Boolean      @default(false)
+  abonnements   Abonnement[]
+}
+
+// Un paiement CinetPay = une ligne ici. EN_ATTENTE tant que le webhook
+// /api/abonnement/notify n'a pas confirmé le paiement ; ACTIF ensuite
+// jusqu'à dateFin. Ne jamais activer un abonnement sans avoir vérifié la
+// transaction auprès de CinetPay (voir lib/cinetpay.js).
+model Abonnement {
+  id            String           @id @default(cuid())
+  user          User             @relation(fields: [userId], references: [id])
+  userId        String
+  plan          Plan             @relation(fields: [planId], references: [id])
+  planId        String
+  statut        StatutAbonnement @default(EN_ATTENTE)
+  transactionId String           @unique
+  dateFin       DateTime?
+  createdAt     DateTime         @default(now())
+
+  @@index([userId])
 }
 
 model Boutique {

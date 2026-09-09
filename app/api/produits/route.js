@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUserFromRequest } from "@/lib/auth";
+import { planEffectif } from "@/lib/planAccess";
 import { CATEGORIES } from "@/app/categories";
 
 // Ajouter un produit à une des boutiques du vendeur (boutiqueId requis
-// depuis qu'un compte peut avoir jusqu'à 4 boutiques)
+// depuis qu'un compte peut avoir plusieurs boutiques)
 export async function POST(request) {
   const user = getUserFromRequest(request);
   if (!user) {
@@ -25,6 +26,24 @@ export async function POST(request) {
       { erreur: "Boutique introuvable." },
       { status: 400 }
     );
+  }
+
+  if (user.role !== "ADMIN") {
+    const [nombreProduits, plan] = await Promise.all([
+      prisma.produit.count({ where: { boutiqueId: boutique.id } }),
+      planEffectif(user.id),
+    ]);
+    if (plan.maxProduits != null && nombreProduits >= plan.maxProduits) {
+      return NextResponse.json(
+        {
+          erreur:
+            plan.code === "GRATUIT"
+              ? "Le plan gratuit est limité à 20 produits par boutique. Passez Pro pour un catalogue illimité."
+              : `Maximum ${plan.maxProduits} produits pour votre plan ${plan.nom}.`,
+        },
+        { status: 409 }
+      );
+    }
   }
   if (!nom || !nom.trim() || prix == null) {
     return NextResponse.json(

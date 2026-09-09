@@ -1,7 +1,7 @@
 import TopNav from "../TopNav";
 import Footer from "../Footer";
 
-export const metadata = { title: "Politique de confidentialité — Divine Harvest Store" };
+export const metadata = { title: "Politique de confidentialité — Find Your Shop" };
 
 export default function Confidentialite() {
   return (

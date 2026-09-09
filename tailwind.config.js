@@ -7,7 +7,7 @@ module.exports = {
   ],
   theme: {
     extend: {
-      // Palette Divine Harvest (v2 — alignée sur le sommaire "Dépasser
+      // Palette Find Your Shop (v2 — alignée sur le sommaire "Dépasser
       // Shopify") : fond gris-bleu clair, cartes blanches, bleu comme
       // couleur de marque. IA reste violette (différenciateur produit).
       colors: {

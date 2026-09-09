@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 import BackButton from "../../BackButton";
 import GoogleSignIn from "../../GoogleSignIn";
-import LogoDivineHarvest from "../../LogoDivineHarvest";
+import LogoFindYourShop from "../../LogoFindYourShop";
 import { PAYS, drapeau } from "../../pays";
 
 export default function Inscription() {
@@ -53,8 +53,8 @@ export default function Inscription() {
         <BackButton secours="/" texte="Accueil" />
 
         <div className="mt-6 flex items-center gap-2 text-accent">
-          <LogoDivineHarvest size={20} />
-          <span className="text-xs font-medium uppercase tracking-widest">Divine Harvest Store</span>
+          <LogoFindYourShop size={20} />
+          <span className="text-xs font-medium uppercase tracking-widest">Find Your Shop</span>
         </div>
         <h1 className="mt-3 font-hero text-3xl font-extrabold">Ouvrez votre boutique</h1>
         <p className="mt-2 text-sm text-paper/60">

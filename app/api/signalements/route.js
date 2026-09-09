@@ -39,7 +39,7 @@ export async function POST(request) {
           Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
         },
         body: JSON.stringify({
-          from: process.env.RESEND_FROM || "Divine Harvest Store <onboarding@resend.dev>",
+          from: process.env.RESEND_FROM || "Find Your Shop <onboarding@resend.dev>",
           to: process.env.ADMIN_EMAIL,
           subject: `Signalement — ${boutique.nom}`,
           html: `<p>Boutique : ${echapperHtml(boutique.nom)} (${escapeUrl(boutique.slug)})</p><p>Motif : ${echapperHtml(raison)}</p>${details ? `<p>Détails : ${echapperHtml(details)}</p>` : ""}${clientEmail ? `<p>Contact : ${echapperHtml(clientEmail)}</p>` : ""}`,

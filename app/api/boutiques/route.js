@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUserFromRequest } from "@/lib/auth";
+import { planEffectif } from "@/lib/planAccess";
 import slugify from "slugify";
 
-// Créer une boutique (jusqu'à 4 par vendeur)
+// Créer une boutique (nombre max selon le plan du vendeur, voir lib/plans.js)
 export async function POST(request) {
   const user = getUserFromRequest(request);
   if (!user) {
@@ -18,13 +19,21 @@ export async function POST(request) {
     );
   }
 
-  // Le compte admin peut ouvrir autant de boutiques qu'il veut, un vendeur
-  // normal reste plafonné à 4.
+  // Le compte admin peut ouvrir autant de boutiques qu'il veut. Un vendeur
+  // normal est plafonné selon son plan (voir /dashboard/abonnement).
   if (user.role !== "ADMIN") {
-    const nombreBoutiques = await prisma.boutique.count({ where: { vendeurId: user.id } });
-    if (nombreBoutiques >= 4) {
+    const [nombreBoutiques, plan] = await Promise.all([
+      prisma.boutique.count({ where: { vendeurId: user.id } }),
+      planEffectif(user.id),
+    ]);
+    if (plan.maxBoutiques != null && nombreBoutiques >= plan.maxBoutiques) {
       return NextResponse.json(
-        { erreur: "Maximum 4 boutiques par compte." },
+        {
+          erreur:
+            plan.code === "GRATUIT"
+              ? "Le plan gratuit est limité à 1 boutique. Passez Pro pour en ouvrir jusqu'à 4."
+              : `Maximum ${plan.maxBoutiques} boutiques pour votre plan ${plan.nom}.`,
+        },
         { status: 409 }
       );
     }

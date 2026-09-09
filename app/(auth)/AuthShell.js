@@ -1,5 +1,5 @@
 import BackButton from "../BackButton";
-import LogoDivineHarvest from "../LogoDivineHarvest";
+import LogoFindYourShop from "../LogoFindYourShop";
 
 const FORMES = [
   { top: "-6%", left: "-8%", size: 140, color: "#2563EB" },
@@ -24,7 +24,7 @@ export default function AuthShell({ retourVers, retourTexte, eyebrow, titre, sou
       <div className="relative mx-auto flex min-h-screen max-w-md flex-col px-6 py-10">
         <div className="flex items-center justify-between">
           <BackButton secours={retourVers} texte={retourTexte} />
-          <LogoDivineHarvest size={20} />
+          <LogoFindYourShop size={20} />
         </div>
 
         <div className="carte-jeu mt-6 border-2 border-ink bg-paper p-6 shadow-[5px_6px_0_0_#0F172A] dark:border-line-dark dark:bg-panel-dark">

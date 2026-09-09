@@ -24,7 +24,7 @@ export default function Hero({ boutiques }) {
 
       <div className="relative mx-auto max-w-3xl">
         <p className="font-body text-xs uppercase tracking-[0.2em] text-accent-light">
-          Divine Harvest Store
+          Find Your Shop
         </p>
         <h1 className="mt-4 font-hero text-4xl font-extrabold leading-[1.05] sm:text-5xl md:text-6xl">
           Récoltez le meilleur,

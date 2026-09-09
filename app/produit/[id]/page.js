@@ -16,14 +16,14 @@ async function getProduit(id) {
 export async function generateMetadata({ params }) {
   const produit = await getProduit(params.id);
   if (!produit || !produit.actif || !produit.boutique.actif) {
-    return { title: "Produit introuvable — Divine Harvest Store" };
+    return { title: "Produit introuvable — Find Your Shop" };
   }
   const description = produit.description
     ? produit.description.slice(0, 155)
-    : `${produit.nom} — vendu par ${produit.boutique.nom} sur Divine Harvest Store.`;
+    : `${produit.nom} — vendu par ${produit.boutique.nom} sur Find Your Shop.`;
 
   return {
-    title: `${produit.nom} — ${produit.boutique.nom} | Divine Harvest Store`,
+    title: `${produit.nom} — ${produit.boutique.nom} | Find Your Shop`,
     description,
     openGraph: {
       title: produit.nom,

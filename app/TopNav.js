@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ChevronDown, Search, X } from "lucide-react";
 import CartBadge from "./CartBadge";
-import LogoDivineHarvest from "./LogoDivineHarvest";
+import LogoFindYourShop from "./LogoFindYourShop";
 import ThemeToggle from "./ThemeToggle";
 import { CATEGORIES } from "./categories";
 import CategoryIcon from "./CategoryIcon";
@@ -43,8 +43,8 @@ export default function TopNav() {
     <div className="sticky top-0 z-30 border-b border-line bg-paper text-ink dark:border-line-dark dark:bg-ink dark:text-paper">
       <div className="flex items-center justify-between gap-3 px-6 py-3 md:px-12">
         <Link href="/" className="flex shrink-0 items-center gap-1.5 font-display text-lg">
-          <LogoDivineHarvest size={18} />
-          Divine Harvest Store
+          <LogoFindYourShop size={18} />
+          Find Your Shop
         </Link>
 
         <div className="flex shrink-0 items-center gap-4">

@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { getUserFromRequest } from "@/lib/auth";
+import { aAcces } from "@/lib/planAccess";
 
-const SYSTEM_PROMPT = `Tu es l'assistant du tableau de bord vendeur de Divine Harvest Store, une
+const SYSTEM_PROMPT = `Tu es l'assistant du tableau de bord vendeur de Find Your Shop, une
 marketplace africaine. Tu aides les vendeurs à : trouver des idées de produits à vendre,
 rédiger des descriptions vendeuses, démarrer leur boutique, et donner des astuces concrètes
 pour mieux vendre (prix, photos, catégories, relation client).
@@ -18,6 +19,13 @@ export async function POST(request) {
     return NextResponse.json(
       { erreur: "Assistant non configuré (GROQ_API_KEY manquante)." },
       { status: 503 }
+    );
+  }
+
+  if (!(await aAcces(user.id, "assistantIA"))) {
+    return NextResponse.json(
+      { erreur: "Fonctionnalité réservée aux plans Pro et Business.", planRequis: true },
+      { status: 403 }
     );
   }
 

@@ -1,7 +1,7 @@
 import TopNav from "../TopNav";
 import Footer from "../Footer";
 
-export const metadata = { title: "Contact — Divine Harvest Store" };
+export const metadata = { title: "Contact — Find Your Shop" };
 
 export default function Contact() {
   return (

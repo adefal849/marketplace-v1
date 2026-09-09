@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 import TopNav from "./TopNav";
 import ArticlesFeed from "./ArticlesFeed";
 import Footer from "./Footer";
-import LogoDivineHarvest from "./LogoDivineHarvest";
+import LogoFindYourShop from "./LogoFindYourShop";
 
 export const dynamic = "force-dynamic";
 
@@ -44,8 +44,8 @@ export default async function Accueil() {
 
         <div className="relative">
           <div className="flex items-center gap-2 text-accent">
-            <LogoDivineHarvest size={22} />
-            <span className="text-xs font-medium uppercase tracking-widest">Divine Harvest Store</span>
+            <LogoFindYourShop size={22} />
+            <span className="text-xs font-medium uppercase tracking-widest">Find Your Shop</span>
           </div>
 
           <h1 className="mt-5 max-w-2xl font-hero text-4xl font-extrabold leading-[1.1] md:text-6xl">

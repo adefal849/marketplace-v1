@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Menu, Search, Bell, X } from "lucide-react";
 import ThemeToggle from "../ThemeToggle";
-import LogoDivineHarvest from "../LogoDivineHarvest";
+import LogoFindYourShop from "../LogoFindYourShop";
 
 const SECTIONS = [
   { href: "/", label: "Accueil (voir les boutiques)" },
@@ -13,6 +13,7 @@ const SECTIONS = [
   { href: "/dashboard/commandes", cle: "commandes", label: "Commandes" },
   { href: "/dashboard/messages", cle: "messages", label: "Messages" },
   { href: "/dashboard/ventes", cle: "ventes", label: "Ventes" },
+  { href: "/dashboard/abonnement", cle: "abonnement", label: "Abonnement" },
   { href: "/dashboard/parametres", cle: "parametres", label: "Paramètres" },
   { href: "/admin", cle: "admin", label: "Administration" },
 ];
@@ -50,8 +51,8 @@ export default function DashboardHeader({ actif, commandesEnAttente = 0, message
         </button>
 
         <Link href="/dashboard" className="flex shrink-0 items-center gap-1.5 font-display text-base">
-          <LogoDivineHarvest size={16} />
-          <span className="hidden sm:inline">Divine Harvest Store</span>
+          <LogoFindYourShop size={16} />
+          <span className="hidden sm:inline">Find Your Shop</span>
         </Link>
 
         <div className="ml-2 flex flex-1 items-center gap-2 rounded-full bg-paper/10 px-3 py-1.5 text-sm text-paper/70">
@@ -74,7 +75,7 @@ export default function DashboardHeader({ actif, commandesEnAttente = 0, message
             aria-label="Compte"
             className="flex h-8 w-8 items-center justify-center rounded-full bg-paper text-sm font-medium text-ink"
           >
-            DH
+            FYS
           </button>
 
           {avatarOuvert && (

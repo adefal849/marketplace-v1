@@ -1,7 +1,7 @@
 import TopNav from "../TopNav";
 import Footer from "../Footer";
 
-export const metadata = { title: "Mentions légales — Divine Harvest Store" };
+export const metadata = { title: "Mentions légales — Find Your Shop" };
 
 // Gabarit à compléter avec les vraies informations légales (forme
 // juridique, numéro RCCM/SIRET, adresse du siège) avant publication —
@@ -42,7 +42,7 @@ export default function MentionsLegales() {
           <div>
             <h2 className="font-display text-lg text-ink dark:text-paper">Fonctionnement de la marketplace</h2>
             <p className="mt-2">
-              Divine Harvest Store met en relation des vendeurs indépendants
+              Find Your Shop met en relation des vendeurs indépendants
               et des acheteurs. Chaque boutique est gérée par son propre
               vendeur, qui reste responsable de ses produits, de leurs
               descriptions et de leur expédition.

@@ -31,7 +31,7 @@ export default function Footer() {
       </div>
 
       <div className="flex flex-col gap-4 px-6 py-8 text-sm text-muted sm:flex-row sm:items-center sm:justify-between md:px-12">
-        <p>© {new Date().getFullYear()} Divine Harvest Store</p>
+        <p>© {new Date().getFullYear()} Find Your Shop</p>
         <nav className="flex flex-wrap gap-x-5 gap-y-2">
           <Link href="/#boutiques" className="hover:text-ink hover:underline">
             Boutiques
