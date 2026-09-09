@@ -1,0 +1,197 @@
+// Schéma V1 — volontairement simple : on ajoutera avis, coupons,
+// paiements réels etc. dans les phases suivantes.
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  VENDEUR
+  ADMIN
+}
+
+enum StatutAbonnement {
+  EN_ATTENTE
+  ACTIF
+  ANNULE
+  EXPIRE
+}
+
+enum StatutCommande {
+  EN_ATTENTE
+  CONFIRMEE
+  EXPEDIEE
+  LIVREE
+  ANNULEE
+}
+
+model User {
+  id          String    @id @default(cuid())
+  email       String    @unique
+  motDePasse  String
+  nom         String
+  pays        String?   // code ISO2 (ex: "BJ", "CI", "FR"), sert à personnaliser l'offre
+  resetToken       String?   @unique
+  resetTokenExpire DateTime?
+  cguAccepteesLe   DateTime? // horodatage de l'acceptation des CGU à l'inscription
+  role        Role      @default(VENDEUR)
+  boutiques   Boutique[] // limite selon le plan actif (voir lib/plans.js), illimité pour un ADMIN
+  abonnements Abonnement[]
+  createdAt   DateTime  @default(now())
+}
+
+// Catalogue des plans (voir lib/plans.js pour les valeurs de référence).
+// Une ligne est créée/mise à jour ici au moment du premier achat d'un plan
+// (upsert dans /api/abonnement), donc pas besoin de seed manuel.
+model Plan {
+  id            String       @id @default(cuid())
+  code          String       @unique // "GRATUIT" | "PRO" | "BUSINESS"
+  nom           String
+  prix          Int          // FCFA / mois, 0 pour le plan gratuit
+  maxBoutiques  Int?         // null = illimité
+  maxProduits   Int?         // par boutique, null = illimité
+  assistantIA   Boolean      @default(false)
+  statsAvancees Boolean      @default(false)
+  badgePremium  Boolean      @default(false)
+  abonnements   Abonnement[]
+}
+
+// Un paiement CinetPay = une ligne ici. EN_ATTENTE tant que le webhook
+// /api/abonnement/notify n'a pas confirmé le paiement ; ACTIF ensuite
+// jusqu'à dateFin. Ne jamais activer un abonnement sans avoir vérifié la
+// transaction auprès de CinetPay (voir lib/cinetpay.js).
+model Abonnement {
+  id            String           @id @default(cuid())
+  user          User             @relation(fields: [userId], references: [id])
+  userId        String
+  plan          Plan             @relation(fields: [planId], references: [id])
+  planId        String
+  statut        StatutAbonnement @default(EN_ATTENTE)
+  transactionId String           @unique
+  dateFin       DateTime?
+  createdAt     DateTime         @default(now())
+
+  @@index([userId])
+}
+
+model Boutique {
+  id            String         @id @default(cuid())
+  nom           String
+  slug          String         @unique // utilisé dans /boutique/[slug]
+  description   String?
+  apropos       String?        // texte libre plus long, éditable par le vendeur sur sa page publique
+  logoUrl       String?
+  bannerUrl     String?
+  couleurAccent String?        // couleur d'accent hex (ex: "#e07a3f"), utilisée sur la page publique
+  latitude      Float?         // position de la boutique, choisie sur la carte (Leaflet/OSM) côté dashboard
+  longitude     Float?         // sert au calcul de distance "à proximité" et au tri sur l'accueil
+  actif         Boolean        @default(true) // permet à l'admin de suspendre
+  vendeur       User           @relation(fields: [vendeurId], references: [id])
+  vendeurId     String
+  produits      Produit[]
+  commandes     Commande[]
+  conversations Conversation[]
+  signalements  Signalement[]
+  createdAt     DateTime       @default(now())
+
+  @@index([vendeurId])
+}
+
+model Produit {
+  id          String        @id @default(cuid())
+  nom         String
+  description String?
+  categorie   String?
+  prix        Int           // en plus petite unité monétaire (ex: centimes / FCFA entier)
+  stock       Int           @default(0)
+  imageUrl    String?
+  actif       Boolean       @default(true)
+  boutique    Boutique      @relation(fields: [boutiqueId], references: [id])
+  boutiqueId  String
+  lignes      LigneCommande[]
+  createdAt   DateTime      @default(now())
+
+  @@index([boutiqueId])
+}
+
+model Commande {
+  id            String          @id @default(cuid())
+  clientNom     String
+  clientEmail   String
+  clientTel     String?
+  adresseLivraison    String?  // description libre du lieu (repère, quartier...) — souvent plus utile qu'un point GPS seul
+  latitudeLivraison   Float?   // point choisi sur la carte par le client au moment de la commande
+  longitudeLivraison  Float?
+  statut        StatutCommande  @default(EN_ATTENTE)
+  total         Int
+  boutique      Boutique        @relation(fields: [boutiqueId], references: [id])
+  boutiqueId    String
+  lignes        LigneCommande[]
+  createdAt     DateTime        @default(now())
+
+  @@index([boutiqueId])
+}
+
+model LigneCommande {
+  id          String   @id @default(cuid())
+  quantite    Int
+  prixUnitaire Int
+  produit     Produit  @relation(fields: [produitId], references: [id])
+  produitId   String
+  commande    Commande @relation(fields: [commandeId], references: [id])
+  commandeId  String
+}
+
+// Discussion acheteur ↔ vendeur (par actualisation automatique côté
+// client, pas de websocket : suffisant pour le volume actuel et sans
+// dépendance à un service externe).
+model Conversation {
+  id          String    @id @default(cuid())
+  boutique    Boutique  @relation(fields: [boutiqueId], references: [id])
+  boutiqueId  String
+  clientNom   String
+  clientEmail String
+  messages    Message[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([boutiqueId])
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  conversationId String
+  auteur         String       // "CLIENT" | "VENDEUR"
+  contenu        String
+  lu             Boolean      @default(false) // vu par le vendeur
+  createdAt      DateTime     @default(now())
+
+  @@index([conversationId])
+}
+
+enum StatutSignalement {
+  NOUVEAU
+  TRAITE
+}
+
+// Signalement d'une boutique par un acheteur (produit trompeur, vendeur
+// injoignable, etc.). Déclenche un email à l'admin + apparaît dans son
+// tableau de bord — pas de compte requis pour signaler.
+model Signalement {
+  id          String            @id @default(cuid())
+  boutique    Boutique          @relation(fields: [boutiqueId], references: [id])
+  boutiqueId  String
+  raison      String
+  details     String?
+  clientEmail String?
+  statut      StatutSignalement @default(NOUVEAU)
+  createdAt   DateTime          @default(now())
+
+  @@index([boutiqueId])
+}
