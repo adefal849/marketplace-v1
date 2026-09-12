@@ -90,6 +90,8 @@ model Boutique {
   couleurAccent String?        // couleur d'accent hex (ex: "#e07a3f"), utilisée sur la page publique
   latitude      Float?         // position de la boutique, choisie sur la carte (Leaflet/OSM) côté dashboard
   longitude     Float?         // sert au calcul de distance "à proximité" et au tri sur l'accueil
+  numeroMobileMoney    String? // numéro perso du vendeur pour le paiement manuel (MTN/Moov) tant qu'aucune passerelle n'est branchée
+  operateurMobileMoney String? // "MTN" | "MOOV" — affiché au client pour qu'il sache quel service utiliser
   actif         Boolean        @default(true) // permet à l'admin de suspendre
   vendeur       User           @relation(fields: [vendeurId], references: [id])
   vendeurId     String
@@ -127,6 +129,8 @@ model Commande {
   adresseLivraison    String?  // description libre du lieu (repère, quartier...) — souvent plus utile qu'un point GPS seul
   latitudeLivraison   Float?   // point choisi sur la carte par le client au moment de la commande
   longitudeLivraison  Float?
+  moyenPaiement       String?  // "mobile_money_manuel" pour l'instant, futures passerelles viendront s'ajouter
+  referencePaiement   String?  // référence/ID reçu par SMS après le transfert Mobile Money, à vérifier manuellement par le vendeur
   statut        StatutCommande  @default(EN_ATTENTE)
   total         Int
   boutique      Boutique        @relation(fields: [boutiqueId], references: [id])

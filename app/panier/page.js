@@ -22,6 +22,8 @@ export default function Panier() {
   const [erreur, setErreur] = useState("");
   const [confirmation, setConfirmation] = useState(null);
   const [alerteStock, setAlerteStock] = useState("");
+  const [infosBoutiques, setInfosBoutiques] = useState({});
+  const [referencesPaiement, setReferencesPaiement] = useState({});
 
   // Revérifie le stock réel dès l'ouverture du panier : le stock a pu
   // changer depuis l'ajout. Le serveur reste la source de vérité finale
@@ -33,6 +35,7 @@ export default function Panier() {
 
     (async () => {
       const ajustements = [];
+      const infos = {};
 
       for (const slug of slugs) {
         try {
@@ -40,6 +43,13 @@ export default function Panier() {
           if (!res.ok) continue;
           const data = await res.json();
           const produitsBoutique = data.boutique?.produits || [];
+
+          if (data.boutique) {
+            infos[slug] = {
+              numeroMobileMoney: data.boutique.numeroMobileMoney || "",
+              operateurMobileMoney: data.boutique.operateurMobileMoney || "MTN",
+            };
+          }
 
           for (const article of panier.filter((a) => a.boutiqueSlug === slug)) {
             const produit = produitsBoutique.find((p) => p.id === article.produitId);
@@ -66,6 +76,7 @@ export default function Panier() {
       }
 
       if (ajustements.length > 0) setAlerteStock(ajustements.join(" "));
+      setInfosBoutiques(infos);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -76,6 +87,7 @@ export default function Panier() {
     const cle = article.boutiqueId;
     if (!groupes[cle]) {
       groupes[cle] = {
+        boutiqueId: cle,
         boutiqueNom: article.boutiqueNom,
         boutiqueSlug: article.boutiqueSlug,
         articles: [],
@@ -84,6 +96,9 @@ export default function Panier() {
     groupes[cle].articles.push(article);
     return groupes;
   }, {});
+
+  const totalParBoutique = (groupe) =>
+    groupe.articles.reduce((s, a) => s + a.prix * a.quantite, 0);
 
   async function passerCommande(e) {
     e.preventDefault();
@@ -98,6 +113,7 @@ export default function Panier() {
           ...form,
           latitudeLivraison: positionLivraison.latitude,
           longitudeLivraison: positionLivraison.longitude,
+          paiements: referencesPaiement,
           articles: panier.map((a) => ({
             produitId: a.produitId,
             quantite: a.quantite,
@@ -195,6 +211,39 @@ export default function Panier() {
                     </li>
                   ))}
                 </ul>
+
+                <div className="mt-4 border-t border-line pt-4">
+                  {infosBoutiques[groupe.boutiqueSlug]?.numeroMobileMoney ? (
+                    <>
+                      <p className="text-sm">
+                        Paiement : envoyez <strong>{totalParBoutique(groupe)} FCFA</strong> par{" "}
+                        {infosBoutiques[groupe.boutiqueSlug].operateurMobileMoney === "MOOV"
+                          ? "Moov Money"
+                          : "MTN Mobile Money"}{" "}
+                        au <strong>{infosBoutiques[groupe.boutiqueSlug].numeroMobileMoney}</strong>.
+                      </p>
+                      <label className="mt-2 flex flex-col gap-1 text-sm">
+                        Référence reçue par SMS après le transfert
+                        <input
+                          required
+                          placeholder="Ex : MP240912.1234.A56789"
+                          className="border border-line bg-paper px-3 py-2 text-ink placeholder:text-muted dark:border-line-dark dark:bg-panel-dark dark:text-paper"
+                          value={referencesPaiement[groupe.boutiqueId] || ""}
+                          onChange={(e) =>
+                            setReferencesPaiement({
+                              ...referencesPaiement,
+                              [groupe.boutiqueId]: e.target.value,
+                            })
+                          }
+                        />
+                      </label>
+                    </>
+                  ) : (
+                    <p className="text-sm text-muted">
+                      Cette boutique n'a pas encore renseigné de numéro Mobile Money. Contactez-la après validation de la commande pour convenir du paiement.
+                    </p>
+                  )}
+                </div>
               </section>
             ))}
           </div>

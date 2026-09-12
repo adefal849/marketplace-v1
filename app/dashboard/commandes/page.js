@@ -146,6 +146,11 @@ export default function Commandes() {
                     {c.adresseLivraison && (
                       <p className="mt-1 text-xs text-muted">Repère : {c.adresseLivraison}</p>
                     )}
+                    {c.referencePaiement && (
+                      <p className="mt-1 text-xs">
+                        Réf. paiement Mobile Money à vérifier : <strong>{c.referencePaiement}</strong>
+                      </p>
+                    )}
                     {c.latitudeLivraison != null && c.longitudeLivraison != null && (
                       <a
                         href={`https://www.openstreetmap.org/?mlat=${c.latitudeLivraison}&mlon=${c.longitudeLivraison}#map=16/${c.latitudeLivraison}/${c.longitudeLivraison}`}

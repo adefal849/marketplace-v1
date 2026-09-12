@@ -38,7 +38,7 @@ export async function PATCH(request) {
     return NextResponse.json({ erreur: "Non authentifié." }, { status: 401 });
   }
 
-  const { id, nom, logoUrl, bannerUrl, description, apropos, couleurAccent, latitude, longitude } = await request.json();
+  const { id, nom, logoUrl, bannerUrl, description, apropos, couleurAccent, latitude, longitude, numeroMobileMoney, operateurMobileMoney } = await request.json();
   if (!id) {
     return NextResponse.json({ erreur: "id requis." }, { status: 400 });
   }
@@ -55,6 +55,13 @@ export async function PATCH(request) {
   }
   if (longitude !== undefined && longitude !== null && (typeof longitude !== "number" || longitude < -180 || longitude > 180)) {
     return NextResponse.json({ erreur: "Longitude invalide." }, { status: 400 });
+  }
+  if (
+    operateurMobileMoney !== undefined &&
+    operateurMobileMoney !== null &&
+    !["MTN", "MOOV"].includes(operateurMobileMoney)
+  ) {
+    return NextResponse.json({ erreur: "Opérateur invalide." }, { status: 400 });
   }
 
   const appartient = await prisma.boutique.findFirst({ where: { id, vendeurId: user.id } });
@@ -73,6 +80,8 @@ export async function PATCH(request) {
       ...(couleurAccent !== undefined ? { couleurAccent } : {}),
       ...(latitude !== undefined ? { latitude } : {}),
       ...(longitude !== undefined ? { longitude } : {}),
+      ...(numeroMobileMoney !== undefined ? { numeroMobileMoney } : {}),
+      ...(operateurMobileMoney !== undefined ? { operateurMobileMoney } : {}),
     },
   });
 

@@ -26,6 +26,8 @@ export default function Parametres() {
   const [couleurAccent, setCouleurAccent] = useState("#2563eb");
   const [latitudeBoutique, setLatitudeBoutique] = useState(null);
   const [longitudeBoutique, setLongitudeBoutique] = useState(null);
+  const [numeroMobileMoney, setNumeroMobileMoney] = useState("");
+  const [operateurMobileMoney, setOperateurMobileMoney] = useState("MTN");
   const [messageBoutique, setMessageBoutique] = useState("");
   const [enregistrementBoutique, setEnregistrementBoutique] = useState(false);
 
@@ -77,6 +79,8 @@ export default function Parametres() {
     setCouleurAccent(data.boutique?.couleurAccent || "#2563eb");
     setLatitudeBoutique(data.boutique?.latitude ?? null);
     setLongitudeBoutique(data.boutique?.longitude ?? null);
+    setNumeroMobileMoney(data.boutique?.numeroMobileMoney || "");
+    setOperateurMobileMoney(data.boutique?.operateurMobileMoney || "MTN");
     setMessageBoutique("");
     setChargement(false);
   }
@@ -143,6 +147,8 @@ export default function Parametres() {
         couleurAccent,
         latitude: latitudeBoutique,
         longitude: longitudeBoutique,
+        numeroMobileMoney,
+        operateurMobileMoney,
       }),
     });
     const data = await res.json();
@@ -283,6 +289,29 @@ export default function Parametres() {
                   <span className="text-xs text-muted">
                     Utilisée pour les boutons et badges de votre page
                   </span>
+                </div>
+              </label>
+
+              <label className="flex flex-col gap-1 text-sm">
+                Paiement Mobile Money (manuel)
+                <span className="text-xs text-muted">
+                  Le client verra ce numéro pour vous envoyer le paiement, puis entrera la référence reçue par SMS. Vous confirmez la commande une fois le paiement vérifié.
+                </span>
+                <div className="mt-1 flex gap-2">
+                  <select
+                    value={operateurMobileMoney}
+                    onChange={(e) => setOperateurMobileMoney(e.target.value)}
+                    className="border border-line bg-paper px-2 py-2 text-sm text-ink dark:border-line-dark dark:bg-panel-dark dark:text-paper"
+                  >
+                    <option value="MTN">MTN</option>
+                    <option value="MOOV">Moov</option>
+                  </select>
+                  <input
+                    placeholder="Numéro (ex : 97 00 00 00)"
+                    className="flex-1 border border-line bg-paper px-3 py-2 text-ink placeholder:text-muted dark:border-line-dark dark:bg-panel-dark dark:text-paper"
+                    value={numeroMobileMoney}
+                    onChange={(e) => setNumeroMobileMoney(e.target.value)}
+                  />
                 </div>
               </label>
 

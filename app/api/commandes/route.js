@@ -14,6 +14,7 @@ export async function POST(request) {
     adresseLivraison,
     latitudeLivraison,
     longitudeLivraison,
+    paiements,
     articles,
   } = await request.json();
 
@@ -105,6 +106,8 @@ export async function POST(request) {
             adresseLivraison: adresseLivraison || null,
             latitudeLivraison: typeof latitudeLivraison === "number" ? latitudeLivraison : null,
             longitudeLivraison: typeof longitudeLivraison === "number" ? longitudeLivraison : null,
+            moyenPaiement: "mobile_money_manuel",
+            referencePaiement: paiements?.[boutiqueId] || null,
             total,
             boutiqueId,
             lignes: {
